@@ -1,0 +1,36 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "RestrictedNavigation",
+	"Description": "AI Navigation through NavAreas with permissions",
+	"Category": "Navigation",
+	"CreatedBy": "Eduard Zakaryan",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "RestrictedNavigation",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "StateTree",
+			"Enabled": true,
+			"Optional": true
+		},
+		{
+			"Name": "GameplayStateTree",
+			"Enabled": true,
+			"Optional": true
+		}
+	]
+}
