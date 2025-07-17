@@ -7,7 +7,7 @@
 #include "NavAreas/RestrictedAreaHelpers.h"
 #include "Components/RestrictedNavigationComponent.h"
 
-URestrictedNavigationQueryFilter_Base::URestrictedNavigationQueryFilter_Base()
+URestrictedNavigationQueryFilter::URestrictedNavigationQueryFilter()
 {
 	FNavigationFilterArea FilterAreaA;
     FilterAreaA.AreaClass = URestrictedNavArea_Low1::StaticClass();
@@ -40,9 +40,11 @@ URestrictedNavigationQueryFilter_Base::URestrictedNavigationQueryFilter_Base()
 	FNavigationFilterArea FilterAreaH;
     FilterAreaH.AreaClass = URestrictedNavArea_High2::StaticClass();
     Areas.Add(FilterAreaH);
+	
+	bInstantiateForQuerier = true;
 }
 
-void URestrictedNavigationQueryFilter_Base::InitializeFilter(const ANavigationData& NavData, const UObject* Querier, FNavigationQueryFilter& Filter) const
+void URestrictedNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, const UObject* Querier, FNavigationQueryFilter& Filter) const
 {
 	// apply overrides
 	for (int32 i = 0; i < Areas.Num(); i++)
