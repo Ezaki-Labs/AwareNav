@@ -118,7 +118,7 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 				if (bPermissionSystemEnabled && AreaData.AreaClass->IsChildOf(UAwRestrictedNavArea_Base::StaticClass()))
 				{
 					
-					if (const auto RestrictedNavigationComponent = QuerierPawn->GetComponentByClass<UAwAgentPermissionProfileComponent>())
+					if (const auto RestrictedNavigationComponent = QuerierPawn->FindComponentByClass<UAwAgentPermissionProfileComponent>())
 					{
 						EAwPermissionLevel NavAreaPermissionLevel = UAwRestrictedNavArea_Base::GetPermissionLevelByNavArea(AreaData.AreaClass);
 						const uint8 PermissionLevels = RestrictedNavigationComponent->GetPermissionLevels();
@@ -138,7 +138,7 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 						continue;
 					}
 					
-					if (const auto AgentEmotionProfileComponent = QuerierPawn->GetComponentByClass<UAwAgentEmotionProfileComponent>())
+					if (const auto AgentEmotionProfileComponent = QuerierPawn->FindComponentByClass<UAwAgentEmotionProfileComponent>())
 					{
 						TSubclassOf<UAwEmotionalNavArea_Base> EmotionalNavArea_Base{AreaData.AreaClass};
 					

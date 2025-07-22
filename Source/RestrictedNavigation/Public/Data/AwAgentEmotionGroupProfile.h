@@ -12,7 +12,7 @@ struct AWARENAV_API FAwAgentEmotionGroupProfile : public FTableRowBase
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+public:	
+	UPROPERTY(EditAnywhere)
 	TMap<TSubclassOf<UAwEmotionalNavArea_Base>, float> EmotionalAreaCostMultipliers;
 };

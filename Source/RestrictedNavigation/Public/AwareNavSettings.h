@@ -33,10 +33,14 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="Permissions")
 	bool bEnablePermissionSystem = true;
 
-	
+	UPROPERTY(Config, EditAnywhere, Category="Permissions", meta=(ToolTip="Assign your permission group DataTable asset here.", RowType = "FAwAgentPermissionGroupProfile"))
+	TSoftObjectPtr<UDataTable> PermissionGroupProfilesTable;
 	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions")
 	bool bEnableEmotionSystem = true;
+
+	UPROPERTY(Config, EditAnywhere, Category="Permissions", meta=(ToolTip="Assign your emotion group DataTable asset here.", RowType = "FAwAgentEmotionGroupProfile"))
+	TSoftObjectPtr<UDataTable> EmotionGroupProfilesTable;
 	
 	UPROPERTY(Config, EditAnywhere, Category="EmotionNav", meta = (bEnableEmotionSystem = "true"))
 	FEmotionCostConfig FearCost {3.0f, 5.0f, 7.0f};

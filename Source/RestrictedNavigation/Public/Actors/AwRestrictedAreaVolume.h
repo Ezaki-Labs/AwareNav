@@ -18,6 +18,8 @@ class AWARENAV_API AAwRestrictedAreaVolume : public ANavModifierVolume
 public:
 	AAwRestrictedAreaVolume(const FObjectInitializer& ObjectInitializer);
 
+	void SetPermissionLevel(EAwPermissionLevel NewPermissionLevel);
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif

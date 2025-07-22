@@ -1,10 +1,19 @@
 #include "Actors/AwRestrictedAreaVolume.h"
 
+#include "NavigationSystem.h"
 #include "NavAreas/AwRestrictedNavAreas.h"
 
 AAwRestrictedAreaVolume::AAwRestrictedAreaVolume(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	AreaClass = UAwRestrictedNavArea_None::StaticClass();
+}
+
+void AAwRestrictedAreaVolume::SetPermissionLevel(EAwPermissionLevel NewPermissionLevel)
+{
+    PermissionLevel = NewPermissionLevel;
+    AreaClass = UAwRestrictedNavArea_Base::GetNavAreaByPermissionLevel(PermissionLevel);
+
+    FNavigationSystem::UpdateActorAndComponentData(*this);
 }
 
 #if WITH_EDITOR

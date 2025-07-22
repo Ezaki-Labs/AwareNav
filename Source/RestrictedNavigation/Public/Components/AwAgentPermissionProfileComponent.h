@@ -13,19 +13,19 @@ class AWARENAV_API UAwAgentPermissionProfileComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bUseIndividualPermissionProfile = false;
-    
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", EditCondition = "!bUseIndividualPermissionProfile"))
-    FDataTableRowHandle PermissionGroupProfile;
+	UPROPERTY(EditAnywhere, Category="AwareNav|Permissions")
+	FName PermissionGroupID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", EditCondition = "bUseIndividualPermissionProfile", Bitmask, BitmaskEnum = "/Script/AwareNav.EAwPermissionLevel"))
+	UPROPERTY()
+	TObjectPtr<UDataTable> PermissionGroupTable = nullptr;
 	uint8 PermissionLevels = 0;
 
 public:	
 	UAwAgentPermissionProfileComponent();
 
 	uint8 GetPermissionLevels() const {return PermissionLevels;}
+
+	void SetAgentGroupProfile(const FName GroupID);
 	
 protected:
 	virtual void BeginPlay() override;
