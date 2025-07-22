@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class RestrictedNavigation : ModuleRules
+public class AwareNav : ModuleRules
 {
-	public RestrictedNavigation(ReadOnlyTargetRules Target) : base(Target)
+	public AwareNav(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPermissionLevel : uint8
+enum class EAwPermissionLevel : uint8
 {
     None                   = 0         UMETA(DisplayName = "None"),
     PermissionLevel_Low1      = 1 << 0    UMETA(DisplayName = "Permission Level Low 1"),
@@ -15,4 +15,4 @@ enum class EPermissionLevel : uint8
     PermissionLevel_High1      = 1 << 6    UMETA(DisplayName = "Permission Level High 1"),
     PermissionLevel_High2      = 1 << 7    UMETA(DisplayName = "Permission Level High 2")
 };
-ENUM_CLASS_FLAGS(EPermissionLevel);
+ENUM_CLASS_FLAGS(EAwPermissionLevel);

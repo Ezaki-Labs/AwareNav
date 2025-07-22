@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FRestrictedNavigationModule : public IModuleInterface
+class FAwareNavModule : public IModuleInterface
 {
 public:
 

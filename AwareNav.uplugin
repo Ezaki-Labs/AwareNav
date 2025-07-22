@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "AwareNav",
+	"Description": "AwareNav enhances AI pathfinding with emotion-driven navigation and permission-based access control. Supports dynamic fear, safety, nostalgia zones, and multi-level permission systems for smarter, context-aware AI behavior.",
+	"Category": "Navigation",
+	"CreatedBy": "Eduard Zakaryan",
+	"CreatedByURL": "https://github.com/eduardzakaryan90",
+	"DocsURL": "https://github.com/eduardzakaryan90/AwareNav/blob/main/README.md",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "AwareNav",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

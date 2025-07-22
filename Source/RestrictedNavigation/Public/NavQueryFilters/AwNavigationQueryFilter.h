@@ -3,15 +3,15 @@
 #include "CoreMinimal.h"
 #include "NavFilters/NavigationQueryFilter.h"
 
-#include "NavigationQueryFilters.generated.h"
+#include "AwNavigationQueryFilter.generated.h"
 
 UCLASS()
-class RESTRICTEDNAVIGATION_API URestrictedNavigationQueryFilter : public UNavigationQueryFilter
+class AWARENAV_API UAwNavigationQueryFilter : public UNavigationQueryFilter
 {
 	GENERATED_BODY()
 
 public:
-	URestrictedNavigationQueryFilter();
+	UAwNavigationQueryFilter();
 	
 protected:
 	virtual void InitializeFilter(const ANavigationData& NavData, const UObject* Querier, FNavigationQueryFilter& Filter) const override;
