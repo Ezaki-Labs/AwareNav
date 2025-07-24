@@ -10,6 +10,7 @@ public class AwareNav : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
+				
 				// ... add public include paths required here ...
 			}
 			);
@@ -17,6 +18,7 @@ public class AwareNav : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
+				
 				// ... add other private include paths required here ...
 			}
 			);

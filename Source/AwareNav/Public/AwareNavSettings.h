@@ -2,26 +2,9 @@
 
 #include "CoreMinimal.h"
 
+#include "Data/AwEmotionCostConfig.h"
+
 #include "AwareNavSettings.generated.h"
-
-USTRUCT(BlueprintType)
-struct FEmotionCostConfig
-{
-	GENERATED_BODY()
-
-	FEmotionCostConfig() {}
-
-	FEmotionCostConfig(const float InLowCost, const float InDefaultCost, const float InHighCost) : LowCost(InLowCost), DefaultCost(InDefaultCost), HighCost(InHighCost) {}
-
-	UPROPERTY(EditAnywhere, Config)
-	float LowCost = 1.0f;
-
-	UPROPERTY(EditAnywhere, Config)
-	float DefaultCost = 0.5f;
-
-	UPROPERTY(EditAnywhere, Config)
-	float HighCost = 0.5f;
-};
 
 UCLASS(Config=AwareNav, DefaultConfig)
 class AWARENAV_API UAwareNavSettings : public UObject
@@ -29,13 +12,16 @@ class AWARENAV_API UAwareNavSettings : public UObject
 	GENERATED_BODY()
 
 public:
+#pragma region Permissions
 	UPROPERTY(Config, EditAnywhere, Category="Permissions")
 	bool bEnablePermissionSystem = true;
 
 	UPROPERTY(Config, EditAnywhere, Category="Permissions", meta=(ToolTip="Assign your permission group DataTable asset here.", RowType = "FAwAgentPermissionGroupProfile", EditCondition = "bEnablePermissionSystem"))
 	TSoftObjectPtr<UDataTable> PermissionGroupProfilesTable;
 	TSoftObjectPtr<UDataTable> CachedPermissionTable;
+#pragma endregion
 	
+#pragma region Emotions	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions")
 	bool bEnableEmotionSystem = true;
 
@@ -44,13 +30,14 @@ public:
 	TSoftObjectPtr<UDataTable> CachedEmotionTable;
 	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (EditCondition = "bEnableEmotionSystem"))
-	FEmotionCostConfig FearCost {3.0f, 5.0f, 7.0f};
+	FAwEmotionCostConfig FearCost {3.0f, 5.0f, 7.0f};
 	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (EditCondition = "bEnableEmotionSystem"))
-	FEmotionCostConfig SafetyCost {0.7f, 0.5f, 0.3f};
+	FAwEmotionCostConfig SafetyCost {0.7f, 0.5f, 0.3f};
 	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (EditCondition = "bEnableEmotionSystem"))
-	FEmotionCostConfig NostalgiaCost {1.0f, 0.7f, 0.5f};
+	FAwEmotionCostConfig NostalgiaCost {1.0f, 0.7f, 0.5f};
+#pragma endregion
 
 protected:
 #if WITH_EDITOR

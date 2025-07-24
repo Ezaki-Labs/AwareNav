@@ -7,12 +7,12 @@
 
 #include "AwRestrictedAreaVolume.generated.h"
 
-UCLASS(BlueprintType)
+UCLASS(Blueprintable, BlueprintType)
 class AWARENAV_API AAwRestrictedAreaVolume : public ANavModifierVolume
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category="AwareNav|Permissions")
 	EAwPermissionLevel PermissionLevel = EAwPermissionLevel::None;
 
 public:

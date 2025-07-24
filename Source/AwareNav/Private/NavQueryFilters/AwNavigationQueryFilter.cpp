@@ -4,7 +4,7 @@
 #include "AIController.h"
 
 #include "Enums/AwPermissionLevel.h"
-#include "NavAreas/AwEmotionalNavAreas.h"
+#include "NavAreas/AwEmotionNavAreas.h"
 #include "NavAreas/AwRestrictedNavAreas.h"
 #include "Components/AwAgentPermissionProfileComponent.h"
 #include "Components/AwAgentEmotionProfileComponent.h"
@@ -49,41 +49,41 @@ UAwNavigationQueryFilter::UAwNavigationQueryFilter()
 
 	// Emotional Nav areas
 	FNavigationFilterArea FilterArea_FearLow;
-	FilterArea_FearLow.AreaClass = UAwEmotionalNavArea_FearLow::StaticClass();
+	FilterArea_FearLow.AreaClass = UAwEmotionNavArea_FearLow::StaticClass();
 	Areas.Add(FilterArea_FearLow);
 	
 	FNavigationFilterArea FilterArea_FearMid;
-	FilterArea_FearMid.AreaClass = UAwEmotionalNavArea_FearDefault::StaticClass();
+	FilterArea_FearMid.AreaClass = UAwEmotionNavArea_FearDefault::StaticClass();
 	Areas.Add(FilterArea_FearMid);
 	
 	FNavigationFilterArea FilterArea_FearHigh;
-	FilterArea_FearHigh.AreaClass = UAwEmotionalNavArea_FearHigh::StaticClass();
+	FilterArea_FearHigh.AreaClass = UAwEmotionNavArea_FearHigh::StaticClass();
 	Areas.Add(FilterArea_FearHigh);
 
 	
 	FNavigationFilterArea FilterArea_SafetyLow;
-	FilterArea_SafetyLow.AreaClass = UAwEmotionalNavArea_SafetyLow::StaticClass();
+	FilterArea_SafetyLow.AreaClass = UAwEmotionNavArea_SafetyLow::StaticClass();
 	Areas.Add(FilterArea_SafetyLow);
 	
 	FNavigationFilterArea FilterArea_SafetyMid;
-	FilterArea_SafetyMid.AreaClass = UAwEmotionalNavArea_SafetyDefault::StaticClass();
+	FilterArea_SafetyMid.AreaClass = UAwEmotionNavArea_SafetyDefault::StaticClass();
 	Areas.Add(FilterArea_SafetyMid);
 	
 	FNavigationFilterArea FilterArea_SafetyHigh;
-	FilterArea_SafetyHigh.AreaClass = UAwEmotionalNavArea_SafetyHigh::StaticClass();
+	FilterArea_SafetyHigh.AreaClass = UAwEmotionNavArea_SafetyHigh::StaticClass();
 	Areas.Add(FilterArea_SafetyHigh);
 
 	
 	FNavigationFilterArea FilterArea_NostalgiaLow;
-	FilterArea_NostalgiaLow.AreaClass = UAwEmotionalNavArea_NostalgiaLow::StaticClass();
+	FilterArea_NostalgiaLow.AreaClass = UAwEmotionNavArea_NostalgiaLow::StaticClass();
 	Areas.Add(FilterArea_NostalgiaLow);
 	
 	FNavigationFilterArea FilterArea_NostalgiaMid;
-	FilterArea_NostalgiaMid.AreaClass = UAwEmotionalNavArea_NostalgiaDefault::StaticClass();
+	FilterArea_NostalgiaMid.AreaClass = UAwEmotionNavArea_NostalgiaDefault::StaticClass();
 	Areas.Add(FilterArea_NostalgiaMid);
 	
 	FNavigationFilterArea FilterArea_NostalgiaHigh;
-	FilterArea_NostalgiaHigh.AreaClass = UAwEmotionalNavArea_NostalgiaHigh::StaticClass();
+	FilterArea_NostalgiaHigh.AreaClass = UAwEmotionNavArea_NostalgiaHigh::StaticClass();
 	Areas.Add(FilterArea_NostalgiaHigh);
 	
 	bInstantiateForQuerier = true;
@@ -129,7 +129,7 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 						}
 					}
 				}
-				else if (AreaData.AreaClass->IsChildOf(UAwEmotionalNavArea_Base::StaticClass()))
+				else if (AreaData.AreaClass->IsChildOf(UAwEmotionNavArea_Base::StaticClass()))
 				{
 					if (!bEmotionSystemEnabled)
 					{
@@ -140,7 +140,7 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 					
 					if (const auto AgentEmotionProfileComponent = QuerierPawn->FindComponentByClass<UAwAgentEmotionProfileComponent>())
 					{
-						TSubclassOf<UAwEmotionalNavArea_Base> EmotionalNavArea_Base{AreaData.AreaClass};
+						TSubclassOf<UAwEmotionNavArea_Base> EmotionalNavArea_Base{AreaData.AreaClass};
 					
 						if (!AgentEmotionProfileComponent->GetEmotionalAreaCostMultipliers().Contains(EmotionalNavArea_Base))
 						{

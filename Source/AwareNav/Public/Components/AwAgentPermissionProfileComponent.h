@@ -15,9 +15,9 @@ class AWARENAV_API UAwAgentPermissionProfileComponent : public UActorComponent
 
 	UPROPERTY(EditAnywhere, Category="AwareNav|Permissions")
 	FName PermissionGroupID;
-
 	UPROPERTY()
 	TObjectPtr<UDataTable> PermissionGroupTable = nullptr;
+	
 	uint8 PermissionLevels = 0;
 
 public:	
@@ -25,7 +25,7 @@ public:
 
 	uint8 GetPermissionLevels() const {return PermissionLevels;}
 
-	void SetAgentGroupProfile(const FName GroupID);
+	void SetAgentPermissionGroupProfile(const FName GroupID);
 	
 protected:
 	virtual void BeginPlay() override;

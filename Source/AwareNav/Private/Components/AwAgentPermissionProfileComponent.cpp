@@ -8,14 +8,14 @@ UAwAgentPermissionProfileComponent::UAwAgentPermissionProfileComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UAwAgentPermissionProfileComponent::SetAgentGroupProfile(const FName GroupID)
+void UAwAgentPermissionProfileComponent::SetAgentPermissionGroupProfile(const FName GroupID)
 {
 	if (GroupID.IsNone())
 	{
 		return;
 	}
 
-	if (const FAwAgentPermissionGroupProfile* PermissionGroupRow = PermissionGroupTable->FindRow<FAwAgentPermissionGroupProfile>(GroupID, TEXT("Permission Lookup")))
+	if (const FAwAgentPermissionGroupProfile* PermissionGroupRow = PermissionGroupTable->FindRow<FAwAgentPermissionGroupProfile>(GroupID, TEXT("Permission Group Lookup")))
 	{
 		PermissionLevels = PermissionGroupRow->PermissionLevels;
 	}
@@ -32,5 +32,5 @@ void UAwAgentPermissionProfileComponent::BeginPlay()
 		check(PermissionGroupTable);
 	}
 
-	SetAgentGroupProfile(PermissionGroupID);
+	SetAgentPermissionGroupProfile(PermissionGroupID);
 }

@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"), Category="AwareNav|Permissions")
 enum class EAwPermissionLevel : uint8
 {
     None                   = 0         UMETA(DisplayName = "None"),

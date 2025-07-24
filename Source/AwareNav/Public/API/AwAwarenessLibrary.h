@@ -16,14 +16,22 @@ class AWARENAV_API UAwAwarenessLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-
+#pragma region Permissions
 	// ----------- Agent with UAwAgentPermissionProfileComponent -----------
 
 	UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions")
-	static void SetAgentGroupProfile(const AActor* Agent, const FName GroupID);
+	static void SetAgentPermissionGroupProfile(const AActor* Agent, const FName GroupID);
 
 	// ----------- Restricted Area Volume -----------
 
 	UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions")
 	static void SetAreaPermission(AAwRestrictedAreaVolume* Area, const EAwPermissionLevel NewPermission);
+#pragma endregion
+
+#pragma region Emotions	
+	// ----------- Agent with UAwAgentPermissionProfileComponent -----------
+
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+	static void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
+#pragma endregion
 };
