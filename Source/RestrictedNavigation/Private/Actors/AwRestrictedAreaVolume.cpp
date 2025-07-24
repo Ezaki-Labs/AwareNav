@@ -21,8 +21,7 @@ void AAwRestrictedAreaVolume::PostEditChangeProperty(FPropertyChangedEvent& Prop
 {
     Super::PostEditChangeProperty(PropertyChangedEvent);
 
-    FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-    // Check if the property that changed matches the one you're interested in
+    const FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
     if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwRestrictedAreaVolume, PermissionLevel))
     {
         AreaClass = UAwRestrictedNavArea_Base::GetNavAreaByPermissionLevel(PermissionLevel);
