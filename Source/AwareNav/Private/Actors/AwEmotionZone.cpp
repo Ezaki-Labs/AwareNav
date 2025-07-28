@@ -1,6 +1,8 @@
 #include "AwEmotionZone.h"
 
+#include "NavigationSystem.h"
 #include "NavModifierComponent.h"
+#include "AI/NavigationSystemBase.h"
 #include "Components/BoxComponent.h"
 
 #include "NavAreas/AwEmotionNavAreas.h"
@@ -12,7 +14,7 @@ AAwEmotionZone::AAwEmotionZone()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
-	constexpr int32 NumBoxes = 4;
+	constexpr int32 NumBoxes = 8;
 	for (int32 i = 0; i < NumBoxes; ++i)
 	{
 		const FName BoxName = *FString::Printf(TEXT("Box%d"), i);
@@ -20,6 +22,7 @@ AAwEmotionZone::AAwEmotionZone()
 		Box->SetupAttachment(RootComponent);
 		Box->SetCanEverAffectNavigation(true);
 		Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		Box->bNavigationRelevant = true;
 
 		Boxes.Add(Box);
 	}
@@ -27,36 +30,77 @@ AAwEmotionZone::AAwEmotionZone()
 	NavModifier = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
 }
 
-void AAwEmotionZone::UpdateEmotionZone(const TSubclassOf<UAwEmotionNavArea_Base>& NavAreaClass, const float Radius, const float MaxRadius) const
+void AAwEmotionZone::SetEmotionZoneParams(const TSubclassOf<UAwEmotionNavArea_Base>& InNavAreaClass, const float InInnerRadius, const float InOuterRadius, const float InMaxRadius)
 {
-	constexpr int32 NumBoxes = 4;
+	NavAreaClass = InNavAreaClass;
+	InnerRadius = InInnerRadius;
+	OuterRadius = InOuterRadius;
+	MaxRadius = InMaxRadius;
+}
 
-	constexpr float AngleStepDeg = 180.0f / NumBoxes;
+void AAwEmotionZone::UpdateEmotionZone()
+{	
+	constexpr int32 NumSides = 8;
+	const float BoxHeight = MaxRadius - OuterRadius + 200.0f;
 
-	const float BoxDepth = Radius * 2 * FMath::Tan(PI / NumBoxes);
-	const float ArcLength = 2 * PI * Radius / NumBoxes;
-	const float BoxWidth = ArcLength * 0.9f;
+	const FVector Center = GetActorLocation();
 
-	const float BoxHeight = MaxRadius - Radius + 200.0f;
+	TArray<FVector> Outers, Inners;
 
-	for (int32 i = 0; i < NumBoxes; ++i)
+	for (int32 i = 0; i < NumSides; ++i)
 	{
+		const float AngleRad = FMath::DegreesToRadians(i * 360.f / NumSides);
+		const FVector Dir = FVector(FMath::Cos(AngleRad), FMath::Sin(AngleRad), 0.f);
+		Outers.Add(Center + Dir * OuterRadius);
+		Inners.Add(Center + Dir * InnerRadius);
+	}
+
+	for (int32 i = 0; i < NumSides; ++i)
+	{
+		const FVector& A1 = Outers[i];
+		const FVector& A2 = Outers[(i + 1) % NumSides];
+		const FVector& B2 = Inners[(i + 1) % NumSides];
+		const FVector& B1 = Inners[i];
+
+		// Midpoints
+		const FVector OuterMid = (A1 + A2) * 0.5f;
+		const FVector InnerMid = (B1 + B2) * 0.5f;
+		const FVector CenterPos = (OuterMid + InnerMid) * 0.5f;
+
+		// Radial (inward direction)
+		const FVector Radial = ((B1 + B2) * 0.5f - (A1 + A2) * 0.5f).GetSafeNormal();
+
+		// Create rotation matrix (Right = Tangent, Up = Z, Forward = Radial)
+		const FRotator Rotation = FRotationMatrix::MakeFromXZ(Radial, FVector::UpVector).Rotator();
+
+		// Box size
+		const float Width = (A2 - A1).Size();         // tangential
+		const float Depth = (A1 - B1).Size();         // radial
+
+		const FVector BoxExtent = FVector(Depth * 0.5f, Width * 0.5f, BoxHeight); // X,Y,Z
+
+		// Update the box
 		UBoxComponent* Box = Boxes[i];
-		const float AngleDeg = i * AngleStepDeg;
-
-		const FRotator Rotation = FRotator(0.f, AngleDeg, 0.f);
-
-		Box->SetBoxExtent(FVector(BoxDepth, BoxWidth * 0.5f, BoxHeight * 0.5f));
-		Box->SetRelativeRotation(Rotation);
+		Box->SetWorldLocation(CenterPos);
+		Box->SetWorldRotation(Rotation);
+		Box->SetBoxExtent(BoxExtent);
 	}
 	
 	NavModifier->SetAreaClass(NavAreaClass);
 
-	// TODO
-    //FNavigationSystem::UpdateComponentData(*NavModifier);
+	FVector CurrentLocation = GetActorLocation();
+	SetActorLocation(CurrentLocation + FVector(0.01f, 0.f, 0.f));
+	SetActorLocation(CurrentLocation);
 }
 
 void AAwEmotionZone::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AAwEmotionZone::PostRegisterAllComponents()
+{
+	Super::PostRegisterAllComponents();
+
+	UpdateEmotionZone();
 }

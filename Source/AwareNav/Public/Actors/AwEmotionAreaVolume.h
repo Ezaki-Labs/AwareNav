@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AwareNavSubsystem.h"
 #include "GameFramework/Actor.h"
 
 #include "Enums/AwEmotionType.h"
@@ -27,16 +28,16 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 	TObjectPtr<USceneComponent> Root = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "AwareNav|Emotions")
-	EAwEmotionType EmotionType = EAwEmotionType::None;
+	EAwEmotionType EmotionType = EAwEmotionType::Fear;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", ClampMin=0.0), Category = "AwareNav|Emotions")
-	float DefaultRadius = 500.0f;
+	float Radius = 300.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", ClampMin=0.0), Category = "AwareNav|Emotions")
-	float LowEffectRadius = 700.0f;
+	float MidEffectRadius = 200.0f;
+	float LowEffectRadius = 300.0f;
+	float HighEffectRadius = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", ClampMin=0.0), Category = "AwareNav|Emotions")
-	float HighEffectRadius = 300.0f;
+	float ReduceSpeedPerMS = 0.0f;
 
 	UPROPERTY()
 	TObjectPtr<UChildActorComponent> HighEffectZoneActor = nullptr;
@@ -52,12 +53,18 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 
 public:
 	AAwEmotionAreaVolume();
-	AAwEmotionAreaVolume(const EAwEmotionType InEmotionType, const float InDefaultRadius, const float InLowEffectRadius = 0.0f, const float InHighEffectRadius = 0.0f);
+	
+	void SetAreaParams(const EAwEmotionType InEmotionType, const float InRadius);
+	void EnableAreaReducing(const float InReduceSpeedPerMS);
 
 protected:	
-	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostRegisterAllComponents() override;
+	virtual void BeginPlay() override;
 	
 	void UpdateChildZones();
+
+	UFUNCTION()
+	void ReduceArea();
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

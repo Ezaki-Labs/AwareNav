@@ -26,69 +26,68 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	ZoneActorMap.Add(EAwEmotionIntensity::Low, LowEffectZoneActor);
 }
 
-AAwEmotionAreaVolume::AAwEmotionAreaVolume(const EAwEmotionType InEmotionType, const float InDefaultRadius,
-	const float InLowEffectRadius, const float InHighEffectRadius)
-		: EmotionType(InEmotionType)
-		, DefaultRadius(InDefaultRadius)
-		, LowEffectRadius(InLowEffectRadius)
-		, HighEffectRadius(InHighEffectRadius)
+void AAwEmotionAreaVolume::SetAreaParams(const EAwEmotionType InEmotionType, const float InRadius)
 {
-	PrimaryActorTick.bCanEverTick = false;
-
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
-
-	HighEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HighEffectZoneActor"));
-	HighEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	HighEffectZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::High, HighEffectZoneActor);
-
-	DefaultZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("DefaultZoneActor"));
-	DefaultZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	DefaultZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::Default, DefaultZoneActor);
-
-	LowEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("LowEffectZoneActor"));
-	LowEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	LowEffectZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::Low, LowEffectZoneActor);
+	EmotionType = InEmotionType;
+	Radius = InRadius;
 }
 
-void AAwEmotionAreaVolume::OnConstruction(const FTransform& Transform)
+void AAwEmotionAreaVolume::EnableAreaReducing(const float InReduceSpeedPerMS)
 {
-	Super::OnConstruction(Transform);
+	ReduceSpeedPerMS = InReduceSpeedPerMS;
+	
+	FTimerHandle LoopTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(LoopTimerHandle, this, &AAwEmotionAreaVolume::ReduceArea, 1.0f, true);
+}
+
+void AAwEmotionAreaVolume::ReduceArea()
+{
+	Radius -= ReduceSpeedPerMS;
+	
+	UpdateChildZones();
+}
+
+void AAwEmotionAreaVolume::PostRegisterAllComponents()
+{
+	Super::PostRegisterAllComponents();
+
+	UpdateChildZones();
+}
+
+void AAwEmotionAreaVolume::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AAwEmotionAreaVolume::UpdateChildZones()
-{	
-	if (DefaultRadius < 0.0f)
+{
+	if (Radius <= 0)
 	{
-		DefaultRadius = 0.0f;
+		return;
 	}
-	if (LowEffectRadius <= DefaultRadius)
-	{
-		LowEffectRadius = 0.0f;
-	}
-	if (HighEffectRadius < 0.0f && HighEffectRadius >= DefaultRadius)
-	{
-		HighEffectRadius = 0.0f;
-	}
+
+	LowEffectRadius = Radius;
+	HighEffectRadius = Radius * 0.33f;
+	MidEffectRadius = HighEffectRadius * 2.0f;
 	
 	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaByEmotionType(EmotionType);
 
-	if (const AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::High]->GetChildActor()))
+	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::High]->GetChildActor()))
 	{
-		Zone->UpdateEmotionZone(EmotionNavAreaGroup.HighCostArea, HighEffectRadius, LowEffectRadius);
+		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.HighCostArea, 0.0f, HighEffectRadius, Radius);
+		Zone->UpdateEmotionZone();
 	}
 
-	if (const AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Default]->GetChildActor()))
+	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Default]->GetChildActor()))
 	{
-		Zone->UpdateEmotionZone(EmotionNavAreaGroup.DefaultArea, DefaultRadius, LowEffectRadius);
+		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.DefaultArea, HighEffectRadius, MidEffectRadius, Radius);
+		Zone->UpdateEmotionZone();
 	}
 
-	if (const AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Low]->GetChildActor()))
+	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Low]->GetChildActor()))
 	{
-		Zone->UpdateEmotionZone(EmotionNavAreaGroup.LowCostArea, LowEffectRadius, LowEffectRadius);
+		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.LowCostArea, MidEffectRadius, LowEffectRadius, Radius);
+		Zone->UpdateEmotionZone();
 	}
 }
 
@@ -99,11 +98,8 @@ void AAwEmotionAreaVolume::PostEditChangeProperty(FPropertyChangedEvent& Propert
 
 	const FName PropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
-	if (
-		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, EmotionType) ||
-		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, DefaultRadius) ||
-		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, LowEffectRadius) ||
-		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, HighEffectRadius))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, EmotionType) ||
+		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, Radius))
 	{
 		UpdateChildZones();
 	}
