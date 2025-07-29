@@ -8,8 +8,13 @@
 
 #include "AwEmotionAreaVolume.generated.h"
 
+class UAwAgentEmotionProfileComponent;
+class USphereComponent;
 class AAwEmotionZone;
 class UAwEmotionNavArea_Base;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEntered, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorLeft, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
 
 UENUM(BlueprintType)
 enum class EAwEmotionIntensity : uint8
@@ -32,12 +37,21 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", ClampMin=0.0), Category = "AwareNav|Emotions")
 	float Radius = 300.0f;
+	
+	UPROPERTY(BlueprintAssignable, Category="AwareNav|Emotions")
+	FOnActorEntered OnActorEntered;
+	
+	UPROPERTY(BlueprintAssignable, Category="AwareNav|Emotions")
+	FOnActorLeft OnActorLeft;
+
+	UPROPERTY()
+	TObjectPtr<USphereComponent> Area = nullptr;
 
 	float MidEffectRadius = 200.0f;
 	float LowEffectRadius = 300.0f;
 	float HighEffectRadius = 100.0f;
 
-	float ReduceSpeedPerMS = 0.0f;
+	float ReduceAmountPerInterval = 0.0f;
 
 	UPROPERTY()
 	TObjectPtr<UChildActorComponent> HighEffectZoneActor = nullptr;
@@ -51,20 +65,34 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 	UPROPERTY()
 	TMap<EAwEmotionIntensity, TObjectPtr<UChildActorComponent>> ZoneActorMap;
 
+	UPROPERTY()
+	TSet<UAwAgentEmotionProfileComponent*> AgentsInArea;
+
 public:
 	AAwEmotionAreaVolume();
 	
 	void SetAreaParams(const EAwEmotionType InEmotionType, const float InRadius);
-	void EnableAreaReducing(const float InReduceSpeedPerMS);
+	void EnableAreaReducing(const float ReduceIntervalInSeconds, const float ReduceAmount);
+
+	void ForceLeaveArea(UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent);
 
 protected:	
 	virtual void PostRegisterAllComponents() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
-	void UpdateChildZones();
+	void UpdateZones();
 
 	UFUNCTION()
 	void ReduceArea();
+	
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	void ActorEntered(UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent);
+	void ActorLeft(UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent);
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

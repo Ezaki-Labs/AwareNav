@@ -28,6 +28,24 @@ void UAwAgentEmotionProfileComponent::SetAgentEmotionGroupProfile(const FName Gr
 	}
 }
 
+void UAwAgentEmotionProfileComponent::EnterEmotionVolume(AAwEmotionAreaVolume* EmotionAreaVolume)
+{
+	if (IsValid(EmotionAreaVolume) && !AreasAgentIsIn.Contains(EmotionAreaVolume))
+	{
+		AreasAgentIsIn.Add(EmotionAreaVolume);
+		OnEnteredEmotionVolume.Broadcast(EmotionAreaVolume);
+	}
+}
+
+void UAwAgentEmotionProfileComponent::LeaveEmotionVolume(AAwEmotionAreaVolume* EmotionAreaVolume)
+{
+	if (IsValid(EmotionAreaVolume) && AreasAgentIsIn.Contains(EmotionAreaVolume))
+	{
+		AreasAgentIsIn.Remove(EmotionAreaVolume);
+		OnLeftEmotionVolume.Broadcast(EmotionAreaVolume);
+	}
+}
+
 void UAwAgentEmotionProfileComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,4 +58,18 @@ void UAwAgentEmotionProfileComponent::BeginPlay()
 	}
 
 	SetAgentEmotionGroupProfile(EmotionGroupID);
+}
+
+void UAwAgentEmotionProfileComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (AAwEmotionAreaVolume* EmotionAreaVolume: AreasAgentIsIn)
+	{
+		if (IsValid(EmotionAreaVolume))
+		{
+			EmotionAreaVolume->ForceLeaveArea(this);
+			OnLeftEmotionVolume.Broadcast(EmotionAreaVolume);			
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }

@@ -78,7 +78,7 @@ void UAwareNavSubsystem::SpawnEmotionArea(const FEmotionAreaSpawnParams& SpawnPa
 		}
 		if (SpawnParams.bReducing)
 		{
-			Spawned->EnableAreaReducing(SpawnParams.ReduceSpeedPerMS);
+			Spawned->EnableAreaReducing(SpawnParams.ReduceIntervalInSeconds, SpawnParams.ReduceAmountPerInterval);
 		}
 	}
 }

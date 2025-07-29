@@ -9,15 +9,15 @@ class UBoxComponent;
 class UAwEmotionNavArea_Base;
 class UNavModifierComponent;
 
-UCLASS()
+UCLASS(NotBlueprintable, HideDropdown)
 class AWARENAV_API AAwEmotionZone : public AActor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY()
 	TObjectPtr<USceneComponent> Root = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY()
 	TObjectPtr<UNavModifierComponent> NavModifier = nullptr;
 
 	UPROPERTY()

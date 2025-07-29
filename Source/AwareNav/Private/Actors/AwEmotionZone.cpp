@@ -1,8 +1,6 @@
-#include "AwEmotionZone.h"
+#include "Actors/AwEmotionZone.h"
 
-#include "NavigationSystem.h"
 #include "NavModifierComponent.h"
-#include "AI/NavigationSystemBase.h"
 #include "Components/BoxComponent.h"
 
 #include "NavAreas/AwEmotionNavAreas.h"
@@ -41,7 +39,7 @@ void AAwEmotionZone::SetEmotionZoneParams(const TSubclassOf<UAwEmotionNavArea_Ba
 void AAwEmotionZone::UpdateEmotionZone()
 {	
 	constexpr int32 NumSides = 8;
-	const float BoxHeight = MaxRadius - OuterRadius + 200.0f;
+	const float BoxHeight = MaxRadius - OuterRadius + 50.0f;
 
 	const FVector Center = GetActorLocation();
 
@@ -88,7 +86,8 @@ void AAwEmotionZone::UpdateEmotionZone()
 	
 	NavModifier->SetAreaClass(NavAreaClass);
 
-	FVector CurrentLocation = GetActorLocation();
+	// TODO: Need to be a better solution for this
+	const FVector CurrentLocation = GetActorLocation();
 	SetActorLocation(CurrentLocation + FVector(0.01f, 0.f, 0.f));
 	SetActorLocation(CurrentLocation);
 }

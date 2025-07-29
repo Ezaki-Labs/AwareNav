@@ -33,7 +33,10 @@ struct FEmotionAreaSpawnParams
 	bool bReducing = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ReduceSpeedPerMS = 20.0f;
+	float ReduceIntervalInSeconds = 3.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ReduceAmountPerInterval = 20.0f;
 };
 
 UCLASS()
