@@ -9,6 +9,7 @@
 
 class AAwRestrictedAreaVolume;
 
+#pragma region Emotion Structs
 USTRUCT(BlueprintType)
 struct FEmotionAreaSpawnParams
 {
@@ -38,6 +39,7 @@ struct FEmotionAreaSpawnParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ReduceAmountPerInterval = 20.0f;
 };
+#pragma endregion
 
 UCLASS(ClassGroup=(AwareNav))
 class AWARENAV_API UAwareNavSubsystem : public UGameInstanceSubsystem
@@ -67,6 +69,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
 	void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
+	
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+	void BoostEmotion(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier);
+	
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+	void BoostEmotionWithTimer(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime);
 
 	// ----------- Emotion Area Volume -----------
 	

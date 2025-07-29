@@ -40,6 +40,7 @@ public:
 	TMap<TSubclassOf<UAwEmotionNavArea_Base>, float> GetEmotionalAreaCostMultipliers() const {return EmotionalAreaCostMultipliers;}
 
 	void SetAgentEmotionGroupProfile(const FName GroupID);
+	void BoostEmotion(const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime = 0.0f);
 	
 	void EnterEmotionVolume(AAwEmotionAreaVolume* EmotionAreaVolume);
 	void LeaveEmotionVolume(AAwEmotionAreaVolume* EmotionAreaVolume);

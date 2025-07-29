@@ -33,8 +33,7 @@ class AWARENAV_API UAwEmotionNavArea_Base : public UNavArea
 	GENERATED_BODY()
 
 public:
-	static FEmotionNavAreaGroup GetNavAreaByEmotionType(const EAwEmotionType PermissionLevel);
-	//static EAwEmotionType GetEmotionTypeByNavArea(const UClass* NavAreaClass);
+	static FEmotionNavAreaGroup GetNavAreaGroupByEmotionType(const EAwEmotionType EmotionType);
 };
 
 UCLASS( BlueprintType )

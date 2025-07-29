@@ -2,9 +2,9 @@
 
 #include "NavAreas/NavArea_Default.h"
 
-FEmotionNavAreaGroup UAwEmotionNavArea_Base::GetNavAreaByEmotionType(const EAwEmotionType PermissionLevel)
+FEmotionNavAreaGroup UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(const EAwEmotionType EmotionType)
 {
-	switch (PermissionLevel)
+	switch (EmotionType)
 	{
 	case EAwEmotionType::Fear:
 		return FEmotionNavAreaGroup {UAwEmotionNavArea_FearDefault::StaticClass(), UAwEmotionNavArea_FearLow::StaticClass(), UAwEmotionNavArea_FearHigh::StaticClass()};
@@ -16,47 +16,3 @@ FEmotionNavAreaGroup UAwEmotionNavArea_Base::GetNavAreaByEmotionType(const EAwEm
 		return FEmotionNavAreaGroup {UNavArea_Default::StaticClass(), UNavArea_Default::StaticClass(), UNavArea_Default::StaticClass()};
 	}
 }
-
-// EAwEmotionType UAwEmotionNavArea_Base::GetEmotionTypeByNavArea(const UClass* NavAreaClass)
-// {
-// 	if (NavAreaClass == UAwEmotionNavArea_FearLow::StaticClass())
-// 	{
-// 		return EAwEmotionType::Fear_Low;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_FearDefault::StaticClass())
-// 	{
-// 		return EAwEmotionType::Fear_Default;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_FearHigh::StaticClass())
-// 	{
-// 		return EAwEmotionType::Fear_High;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_SafetyLow::StaticClass())
-// 	{
-// 		return EAwEmotionType::Safety_Low;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_SafetyDefault::StaticClass())
-// 	{
-// 		return EAwEmotionType::Safety_Default;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_SafetyHigh::StaticClass())
-// 	{
-// 		return EAwEmotionType::Safety_High;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_NostalgiaLow::StaticClass())
-// 	{
-// 		return EAwEmotionType::Nostalgia_Low;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_NostalgiaDefault::StaticClass())
-// 	{
-// 		return EAwEmotionType::Nostalgia_Default;
-// 	}
-// 	else if (NavAreaClass == UAwEmotionNavArea_NostalgiaHigh::StaticClass())
-// 	{
-// 		return EAwEmotionType::Nostalgia_High;
-// 	}
-// 	else
-// 	{
-// 		return EAwEmotionType::None;
-// 	}
-// }

@@ -25,7 +25,7 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	TriggerVolume->SetGenerateOverlapEvents(true);
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius - 30.0f, 1.f));
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 0.8, 1.f));
 
 	
 	HighEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HighEffectZoneActor"));
@@ -163,9 +163,9 @@ void AAwEmotionAreaVolume::UpdateZones()
 	HighEffectRadius = Radius * 0.33f;
 	MidEffectRadius = HighEffectRadius * 2.0f;
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius - 30.0f, 1.f));
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 0.8, 1.f));
 	
-	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaByEmotionType(EmotionType);
+	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(EmotionType);
 
 	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::High]->GetChildActor()))
 	{

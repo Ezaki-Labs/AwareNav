@@ -47,6 +47,10 @@ void UAwAgentPermissionProfileComponent::SetAgentPermissionGroupProfile(const FN
 	{
 		PermissionLevels = PermissionGroupRow->PermissionLevels;
 	}
+	else
+	{
+		checkf(false, TEXT("Invalid Permisssion GroupID"));
+	}
 }
 
 void UAwAgentPermissionProfileComponent::EnterPermissionVolume(AAwRestrictedAreaVolume* RestrictedAreaVolume)
