@@ -8,6 +8,34 @@ UAwAgentPermissionProfileComponent::UAwAgentPermissionProfileComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+void UAwAgentPermissionProfileComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
+	if (Settings && Settings->PermissionGroupProfilesTable.IsValid())
+	{
+		PermissionGroupTable = Settings->PermissionGroupProfilesTable.LoadSynchronous();
+		check(PermissionGroupTable);
+	}
+
+	SetAgentPermissionGroupProfile(PermissionGroupID);
+}
+
+void UAwAgentPermissionProfileComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (AAwRestrictedAreaVolume* EmotionAreaVolume: AreasAgentIsIn)
+	{
+		if (IsValid(EmotionAreaVolume))
+		{
+			EmotionAreaVolume->ForceLeaveArea(this);
+			OnLeftRestrictedVolume.Broadcast(EmotionAreaVolume);			
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void UAwAgentPermissionProfileComponent::SetAgentPermissionGroupProfile(const FName GroupID)
 {
 	if (GroupID.IsNone())
@@ -21,16 +49,20 @@ void UAwAgentPermissionProfileComponent::SetAgentPermissionGroupProfile(const FN
 	}
 }
 
-void UAwAgentPermissionProfileComponent::BeginPlay()
+void UAwAgentPermissionProfileComponent::EnterPermissionVolume(AAwRestrictedAreaVolume* RestrictedAreaVolume)
 {
-	Super::BeginPlay();
-	
-	const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-	if (Settings && Settings->PermissionGroupProfilesTable.IsValid())
+	if (IsValid(RestrictedAreaVolume) && !AreasAgentIsIn.Contains(RestrictedAreaVolume))
 	{
-		PermissionGroupTable = Settings->PermissionGroupProfilesTable.LoadSynchronous();
-		check(PermissionGroupTable);
+		AreasAgentIsIn.Add(RestrictedAreaVolume);
+		OnEnteredRestrictedVolume.Broadcast(RestrictedAreaVolume);
 	}
+}
 
-	SetAgentPermissionGroupProfile(PermissionGroupID);
+void UAwAgentPermissionProfileComponent::LeavePermissionVolume(AAwRestrictedAreaVolume* RestrictedAreaVolume)
+{
+	if (IsValid(RestrictedAreaVolume) && AreasAgentIsIn.Contains(RestrictedAreaVolume))
+	{
+		AreasAgentIsIn.Remove(RestrictedAreaVolume);
+		OnLeftRestrictedVolume.Broadcast(RestrictedAreaVolume);
+	}
 }

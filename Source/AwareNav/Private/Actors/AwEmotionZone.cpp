@@ -28,6 +28,18 @@ AAwEmotionZone::AAwEmotionZone()
 	NavModifier = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
 }
 
+void AAwEmotionZone::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AAwEmotionZone::PostRegisterAllComponents()
+{
+	Super::PostRegisterAllComponents();
+
+	UpdateEmotionZone();
+}
+
 void AAwEmotionZone::SetEmotionZoneParams(const TSubclassOf<UAwEmotionNavArea_Base>& InNavAreaClass, const float InInnerRadius, const float InOuterRadius, const float InMaxRadius)
 {
 	NavAreaClass = InNavAreaClass;
@@ -90,16 +102,4 @@ void AAwEmotionZone::UpdateEmotionZone()
 	const FVector CurrentLocation = GetActorLocation();
 	SetActorLocation(CurrentLocation + FVector(0.01f, 0.f, 0.f));
 	SetActorLocation(CurrentLocation);
-}
-
-void AAwEmotionZone::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AAwEmotionZone::PostRegisterAllComponents()
-{
-	Super::PostRegisterAllComponents();
-
-	UpdateEmotionZone();
 }

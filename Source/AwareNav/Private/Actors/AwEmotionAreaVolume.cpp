@@ -1,8 +1,9 @@
 #include "Actors/AwEmotionAreaVolume.h"
 
+#include "Components/SphereComponent.h"
+
 #include "Actors/AwEmotionZone.h"
 #include "Components/AwAgentEmotionProfileComponent.h"
-#include "Components/SphereComponent.h"
 #include "NavAreas/AwEmotionNavAreas.h"
 
 AAwEmotionAreaVolume::AAwEmotionAreaVolume()
@@ -17,11 +18,7 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	Area->SetCanEverAffectNavigation(false);
 	Area->bNavigationRelevant = false;
 	Area->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Area->SetSphereRadius(Radius * 0.9f);
-	
-	Area->OnComponentBeginOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnBeginOverlap);
-	Area->OnComponentEndOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnEndOverlap);
-	
+	Area->SetSphereRadius(Radius * 0.9f);	
 
 	HighEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HighEffectZoneActor"));
 	HighEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
@@ -39,6 +36,40 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	ZoneActorMap.Add(EAwEmotionIntensity::Low, LowEffectZoneActor);
 }
 
+void AAwEmotionAreaVolume::BeginPlay()
+{
+	Super::BeginPlay();
+
+	const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
+	bEmotionsSystemEnabled = Settings->bEnableEmotionSystem;
+	if (bEmotionsSystemEnabled)
+	{
+		Area->OnComponentBeginOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnBeginOverlap);
+		Area->OnComponentEndOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnEndOverlap);
+	}
+}
+
+void AAwEmotionAreaVolume::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent: AgentsInArea)
+	{
+		if (IsValid(AgentEmotionProfileComponent))
+		{
+			AgentEmotionProfileComponent->LeaveEmotionVolume(this);
+			OnActorLeft.Broadcast(AgentEmotionProfileComponent->GetOwner(), AgentEmotionProfileComponent);
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
+void AAwEmotionAreaVolume::PostRegisterAllComponents()
+{
+	Super::PostRegisterAllComponents();
+
+	UpdateZones();
+}
+
 void AAwEmotionAreaVolume::SetAreaParams(const EAwEmotionType InEmotionType, const float InRadius)
 {
 	EmotionType = InEmotionType;
@@ -47,10 +78,13 @@ void AAwEmotionAreaVolume::SetAreaParams(const EAwEmotionType InEmotionType, con
 
 void AAwEmotionAreaVolume::EnableAreaReducing(const float ReduceIntervalInSeconds, const float ReduceAmount)
 {
-	ReduceAmountPerInterval = ReduceAmount;
+	if (bEmotionsSystemEnabled)
+	{
+		ReduceAmountPerInterval = ReduceAmount;
 	
-	FTimerHandle LoopTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(LoopTimerHandle, this, &AAwEmotionAreaVolume::ReduceArea, ReduceIntervalInSeconds, true);
+		FTimerHandle LoopTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(LoopTimerHandle, this, &AAwEmotionAreaVolume::ReduceArea, ReduceIntervalInSeconds, true);
+	}
 }
 
 void AAwEmotionAreaVolume::ForceLeaveArea(UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent)
@@ -108,32 +142,6 @@ void AAwEmotionAreaVolume::ActorLeft(UAwAgentEmotionProfileComponent* AgentEmoti
 		AgentsInArea.Remove(AgentEmotionProfileComponent);
 		OnActorLeft.Broadcast(AgentEmotionProfileComponent->GetOwner(), AgentEmotionProfileComponent);
 	}
-}
-
-void AAwEmotionAreaVolume::PostRegisterAllComponents()
-{
-	Super::PostRegisterAllComponents();
-
-	UpdateZones();
-}
-
-void AAwEmotionAreaVolume::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AAwEmotionAreaVolume::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	for (UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent: AgentsInArea)
-	{
-		if (IsValid(AgentEmotionProfileComponent))
-		{
-			AgentEmotionProfileComponent->LeaveEmotionVolume(this);
-			OnActorLeft.Broadcast(AgentEmotionProfileComponent->GetOwner(), AgentEmotionProfileComponent);
-		}
-	}
-	
-	Super::EndPlay(EndPlayReason);
 }
 
 void AAwEmotionAreaVolume::UpdateZones()

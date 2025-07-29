@@ -13,8 +13,8 @@ class USphereComponent;
 class AAwEmotionZone;
 class UAwEmotionNavArea_Base;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEntered, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorLeft, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEnteredEmotionArea, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorLeftEmotionArea, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
 
 UENUM(BlueprintType)
 enum class EAwEmotionIntensity : uint8
@@ -39,13 +39,15 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 	float Radius = 300.0f;
 	
 	UPROPERTY(BlueprintAssignable, Category="AwareNav|Emotions")
-	FOnActorEntered OnActorEntered;
+	FOnActorEnteredEmotionArea OnActorEntered;
 	
 	UPROPERTY(BlueprintAssignable, Category="AwareNav|Emotions")
-	FOnActorLeft OnActorLeft;
+	FOnActorLeftEmotionArea OnActorLeft;
 
 	UPROPERTY()
 	TObjectPtr<USphereComponent> Area = nullptr;
+
+	bool bEmotionsSystemEnabled = false;
 
 	float MidEffectRadius = 200.0f;
 	float LowEffectRadius = 300.0f;

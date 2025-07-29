@@ -36,7 +36,7 @@ public:
 	FAwEmotionCostConfig SafetyCost {0.7f, 0.5f, 0.3f};
 	
 	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (EditCondition = "bEnableEmotionSystem"))
-	FAwEmotionCostConfig NostalgiaCost {1.0f, 0.7f, 0.5f};
+	FAwEmotionCostConfig NostalgiaCost {0.9f, 0.7f, 0.5f};
 #pragma endregion
 
 protected:
