@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AwareNavSubsystem.h"
 #include "GameFramework/Actor.h"
 
 #include "Enums/AwEmotionType.h"
@@ -24,7 +23,7 @@ enum class EAwEmotionIntensity : uint8
 	High				UMETA(DisplayName = "High"),
 };
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(ClassGroup=(AwareNav), BlueprintType, Blueprintable)
 class AWARENAV_API AAwEmotionAreaVolume : public AActor
 {
 	GENERATED_BODY()
@@ -45,7 +44,7 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 	FOnActorLeftEmotionArea OnActorLeft;
 
 	UPROPERTY()
-	TObjectPtr<USphereComponent> Area = nullptr;
+	TObjectPtr<USphereComponent> TriggerVolume = nullptr;
 
 	bool bEmotionsSystemEnabled = false;
 

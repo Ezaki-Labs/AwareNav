@@ -7,7 +7,7 @@
 
 #include "AwRestrictedNavAreas.generated.h"
 
-UCLASS( BlueprintType, Abstract )
+UCLASS( Abstract )
 class AWARENAV_API UAwRestrictedNavArea_Base : public UNavArea
 {
 	GENERATED_BODY()

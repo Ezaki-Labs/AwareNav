@@ -11,7 +11,7 @@ class UAwEmotionNavArea_Base;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnEnteredEmotionVolume, AAwEmotionAreaVolume*, EmotionAreaVolume);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnLeftEmotionVolume, AAwEmotionAreaVolume*, EmotionAreaVolume);
 
-UCLASS( meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(AwareNav), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class AWARENAV_API UAwAgentEmotionProfileComponent : public UActorComponent
 {
 	GENERATED_BODY()

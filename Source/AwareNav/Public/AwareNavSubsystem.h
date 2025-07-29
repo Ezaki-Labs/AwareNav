@@ -39,7 +39,7 @@ struct FEmotionAreaSpawnParams
 	float ReduceAmountPerInterval = 20.0f;
 };
 
-UCLASS()
+UCLASS(ClassGroup=(AwareNav))
 class AWARENAV_API UAwareNavSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()

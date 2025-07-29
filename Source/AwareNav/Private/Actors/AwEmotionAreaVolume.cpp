@@ -13,13 +13,21 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
-	Area = CreateDefaultSubobject<USphereComponent>(TEXT("Area"));
-	Area->SetupAttachment(RootComponent);
-	Area->SetCanEverAffectNavigation(false);
-	Area->bNavigationRelevant = false;
-	Area->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Area->SetSphereRadius(Radius * 0.9f);	
+	TriggerVolume = CreateDefaultSubobject<USphereComponent>(TEXT("TriggerVolume"));
+	TriggerVolume->SetupAttachment(Root);
+	
+	TriggerVolume->SetCanEverAffectNavigation(false);
+	TriggerVolume->bNavigationRelevant = false;
+	
+	TriggerVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	TriggerVolume->SetCollisionObjectType(ECC_WorldDynamic);
+	TriggerVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
+	TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	TriggerVolume->SetGenerateOverlapEvents(true);
+	
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius - 30.0f, 1.f));
 
+	
 	HighEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HighEffectZoneActor"));
 	HighEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
 	HighEffectZoneActor->SetupAttachment(Root);
@@ -44,8 +52,8 @@ void AAwEmotionAreaVolume::BeginPlay()
 	bEmotionsSystemEnabled = Settings->bEnableEmotionSystem;
 	if (bEmotionsSystemEnabled)
 	{
-		Area->OnComponentBeginOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnBeginOverlap);
-		Area->OnComponentEndOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnEndOverlap);
+		TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnBeginOverlap);
+		TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &AAwEmotionAreaVolume::OnEndOverlap);
 	}
 }
 
@@ -155,7 +163,7 @@ void AAwEmotionAreaVolume::UpdateZones()
 	HighEffectRadius = Radius * 0.33f;
 	MidEffectRadius = HighEffectRadius * 2.0f;
 	
-	Area->SetSphereRadius(Radius * 0.9f);
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius - 30.0f, 1.f));
 	
 	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaByEmotionType(EmotionType);
 

@@ -27,7 +27,7 @@ struct FEmotionNavAreaGroup
 	TSubclassOf<UAwEmotionNavArea_Base> HighCostArea;
 };
 
-UCLASS( BlueprintType, Abstract )
+UCLASS( Abstract )
 class AWARENAV_API UAwEmotionNavArea_Base : public UNavArea
 {
 	GENERATED_BODY()

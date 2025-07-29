@@ -5,7 +5,7 @@
 
 #include "AwNavigationQueryFilter.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup=(AwareNav), BlueprintType, Blueprintable)
 class AWARENAV_API UAwNavigationQueryFilter : public UNavigationQueryFilter
 {
 	GENERATED_BODY()

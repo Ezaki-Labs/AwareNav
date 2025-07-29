@@ -12,7 +12,7 @@ class UAwAgentPermissionProfileComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEnteredRestrictedArea, AActor*, Agent, UAwAgentPermissionProfileComponent*, AgentPermissionProfileComponent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorLeftRestrictedArea, AActor*, Agent, UAwAgentPermissionProfileComponent*, AgentPermissionProfileComponent);
 
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(ClassGroup=(AwareNav), BlueprintType, Blueprintable)
 class AWARENAV_API AAwRestrictedAreaVolume : public ANavModifierVolume
 {
 	GENERATED_BODY()
@@ -25,6 +25,9 @@ class AWARENAV_API AAwRestrictedAreaVolume : public ANavModifierVolume
 	
 	UPROPERTY(BlueprintAssignable, Category="AwareNav|Permissions")
 	FOnActorLeftRestrictedArea OnActorLeft;
+	
+	UPROPERTY()
+	class UBoxComponent* TriggerVolume;
 
 	bool bPermissionSystemEnabled = false;
 
@@ -39,18 +42,24 @@ public:
 	void ForceLeaveArea(UAwAgentPermissionProfileComponent* AgentPermissionProfileComponent);
 
 protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
+	
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UFUNCTION()
-	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	void ActorEntered(UAwAgentPermissionProfileComponent* AgentPermissionProfileComponent);
 	void ActorLeft(UAwAgentPermissionProfileComponent* AgentPermissionProfileComponent);
 
+	void UpdateTriggerVolumeSize() const;
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	virtual void PostEditMove(bool bFinished) override;
 #endif
 };

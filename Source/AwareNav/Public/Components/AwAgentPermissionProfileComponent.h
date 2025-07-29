@@ -13,7 +13,7 @@ class AAwRestrictedAreaVolume;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnEnteredRestrictedVolume, AAwRestrictedAreaVolume*, RestrictedAreaVolume);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnLeftRestrictedVolume, AAwRestrictedAreaVolume*, RestrictedAreaVolume);
 
-UCLASS( meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(AwareNav), BlueprintType, Blueprintable, meta=(BlueprintSpawnableComponent))
 class AWARENAV_API UAwAgentPermissionProfileComponent : public UActorComponent
 {
 	GENERATED_BODY()
