@@ -69,7 +69,7 @@ void UAwareNavSubsystem::BoostEmotion(const AActor* Agent, const EAwEmotionType 
 	}
 }
 
-void UAwareNavSubsystem::BoostEmotionWithTimer(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime)
+void UAwareNavSubsystem::BoostEmotionTemporarily(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime)
 {
 	if (!IsValid(Agent))
 	{

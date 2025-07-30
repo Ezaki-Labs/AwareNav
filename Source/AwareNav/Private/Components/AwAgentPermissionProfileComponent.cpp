@@ -11,12 +11,14 @@ UAwAgentPermissionProfileComponent::UAwAgentPermissionProfileComponent()
 void UAwAgentPermissionProfileComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-	if (Settings && Settings->PermissionGroupProfilesTable.IsValid())
+
+	if (const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>())
 	{
-		PermissionGroupTable = Settings->PermissionGroupProfilesTable.LoadSynchronous();
-		check(PermissionGroupTable);
+		if (Settings->PermissionGroupProfilesTable.IsValid())
+		{
+			PermissionGroupTable = Settings->PermissionGroupProfilesTable.LoadSynchronous();
+			check(PermissionGroupTable);
+		}
 	}
 
 	SetAgentPermissionGroupProfile(PermissionGroupID);

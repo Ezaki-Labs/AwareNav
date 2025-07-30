@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AwareNavSettings.h"
 #include "NavAreas/NavArea.h"
 
+#include "AwareNavSettings.h"
 #include "Enums/AwEmotionType.h"
 
 #include "AwEmotionNavAreas.generated.h"
@@ -16,15 +16,13 @@ struct FEmotionNavAreaGroup
 	GENERATED_BODY()
 
 	FEmotionNavAreaGroup() {}
-	FEmotionNavAreaGroup(const TSubclassOf<UAwEmotionNavArea_Base>& InDefaultArea, const TSubclassOf<UAwEmotionNavArea_Base>& InLowCostArea, const TSubclassOf<UAwEmotionNavArea_Base>& InHighCostArea)
+	FEmotionNavAreaGroup(const TSubclassOf<UAwEmotionNavArea_Base>& InDefaultArea, const TSubclassOf<UAwEmotionNavArea_Base>& InLowEffectArea)
 		: DefaultArea(InDefaultArea)
-		, LowCostArea(InLowCostArea)
-		, HighCostArea(InHighCostArea)
+		, LowEffectArea(InLowEffectArea)
 	{}
 
 	TSubclassOf<UAwEmotionNavArea_Base> DefaultArea;
-	TSubclassOf<UAwEmotionNavArea_Base> LowCostArea;
-	TSubclassOf<UAwEmotionNavArea_Base> HighCostArea;
+	TSubclassOf<UAwEmotionNavArea_Base> LowEffectArea;
 };
 
 UCLASS( Abstract )
@@ -32,8 +30,17 @@ class AWARENAV_API UAwEmotionNavArea_Base : public UNavArea
 {
 	GENERATED_BODY()
 
-public:
+public:	
+	EAwEmotionType EmotionType = EAwEmotionType::None;
+
+	float GetAreaDynamicCost(const float CostMultiplier = 1.0f) const;
+	
 	static FEmotionNavAreaGroup GetNavAreaGroupByEmotionType(const EAwEmotionType EmotionType);
+
+protected:
+	float EmotionLowEffectDiff = 0.0f;
+	bool bIsLowEffectArea = false;
+	float DefaultEffectAreaCost = 0.0f;
 };
 
 UCLASS( BlueprintType )
@@ -45,36 +52,66 @@ public:
 	UAwEmotionNavArea_FearDefault()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->FearCost.DefaultCost;
-		DrawColor = FColor(150, 60, 180);
+		DefaultEffectAreaCost = Settings->FearCost;
+		EmotionType = EAwEmotionType::Fear;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(92, 20, 87);
 	}
 };
 
 UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_FearLow : public UAwEmotionNavArea_Base
+class AWARENAV_API UAwEmotionNavArea_FearLowEffect : public UAwEmotionNavArea_Base
 {
 	GENERATED_BODY()
 
 public:
-	UAwEmotionNavArea_FearLow()
+	UAwEmotionNavArea_FearLowEffect()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->FearCost.LowCost;
-		DrawColor = FColor(80, 40, 130);
+		DefaultEffectAreaCost = Settings->FearCost;
+		EmotionType = EAwEmotionType::Fear;
+		bIsLowEffectArea = true;
+		EmotionLowEffectDiff = Settings->EmotionLowEffectDiff;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(166, 80, 160);
 	}
 };
 
 UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_FearHigh : public UAwEmotionNavArea_Base
+class AWARENAV_API UAwEmotionNavArea_HauntingDefault : public UAwEmotionNavArea_Base
 {
 	GENERATED_BODY()
 
 public:
-	UAwEmotionNavArea_FearHigh()
+	UAwEmotionNavArea_HauntingDefault()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->FearCost.HighCost;
-		DrawColor = FColor(220, 60, 240);
+		DefaultEffectAreaCost = Settings->HauntingCost;
+		EmotionType = EAwEmotionType::Haunting;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(51, 38, 89);
+	}
+};
+
+UCLASS( BlueprintType )
+class AWARENAV_API UAwEmotionNavArea_HauntingLowEffect : public UAwEmotionNavArea_Base
+{
+	GENERATED_BODY()
+
+public:
+	UAwEmotionNavArea_HauntingLowEffect()
+	{
+		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
+		DefaultEffectAreaCost = Settings->HauntingCost;
+		EmotionType = EAwEmotionType::Haunting;
+		bIsLowEffectArea = true;
+		EmotionLowEffectDiff = Settings->EmotionLowEffectDiff;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(131, 112, 186);
 	}
 };
 
@@ -87,36 +124,30 @@ public:
 	UAwEmotionNavArea_SafetyDefault()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->SafetyCost.DefaultCost;
-		DrawColor = FColor(60, 150, 120);
+		DefaultEffectAreaCost = Settings->SafetyCost;
+		EmotionType = EAwEmotionType::Safety;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(16, 54, 52);
 	}
 };
 
 UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_SafetyLow : public UAwEmotionNavArea_Base
+class AWARENAV_API UAwEmotionNavArea_SafetyLowEffect : public UAwEmotionNavArea_Base
 {
 	GENERATED_BODY()
 
 public:
-	UAwEmotionNavArea_SafetyLow()
+	UAwEmotionNavArea_SafetyLowEffect()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->SafetyCost.LowCost;
-		DrawColor = FColor(40, 80, 80);
-	}
-};
+		DefaultEffectAreaCost = Settings->SafetyCost;
+		EmotionType = EAwEmotionType::Safety;
+		bIsLowEffectArea = true;
+		EmotionLowEffectDiff = Settings->EmotionLowEffectDiff;
 
-UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_SafetyHigh : public UAwEmotionNavArea_Base
-{
-	GENERATED_BODY()
-
-public:
-	UAwEmotionNavArea_SafetyHigh()
-	{
-		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->SafetyCost.HighCost;
-		DrawColor = FColor(80, 220, 160);
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(102, 173, 170);
 	}
 };
 
@@ -129,35 +160,29 @@ public:
 	UAwEmotionNavArea_NostalgiaDefault()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->NostalgiaCost.DefaultCost;
-		DrawColor = FColor(160, 100, 60);
+		DefaultEffectAreaCost = Settings->NostalgiaCost;
+		EmotionType = EAwEmotionType::Nostalgia;
+
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(12, 38, 54);
 	}
 };
 
 UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_NostalgiaLow : public UAwEmotionNavArea_Base
+class AWARENAV_API UAwEmotionNavArea_NostalgiaLowEffect : public UAwEmotionNavArea_Base
 {
 	GENERATED_BODY()
 
 public:
-	UAwEmotionNavArea_NostalgiaLow()
+	UAwEmotionNavArea_NostalgiaLowEffect()
 	{
 		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->NostalgiaCost.LowCost;
-		DrawColor = FColor(100, 60, 40);
-	}
-};
+		DefaultEffectAreaCost = Settings->NostalgiaCost;
+		EmotionType = EAwEmotionType::Nostalgia;
+		bIsLowEffectArea = true;
+		EmotionLowEffectDiff = Settings->EmotionLowEffectDiff;
 
-UCLASS( BlueprintType )
-class AWARENAV_API UAwEmotionNavArea_NostalgiaHigh : public UAwEmotionNavArea_Base
-{
-	GENERATED_BODY()
-
-public:
-	UAwEmotionNavArea_NostalgiaHigh()
-	{
-		const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-		DefaultCost = Settings->NostalgiaCost.HighCost;
-		DrawColor = FColor(240, 160, 80);
+		//DefaultCost = GetAreaDynamicCost();
+		DrawColor = FColor(96, 138, 163);
 	}
 };

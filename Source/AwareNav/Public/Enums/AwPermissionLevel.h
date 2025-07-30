@@ -2,6 +2,10 @@
 
 #include "CoreMinimal.h"
 
+/**
+ * @brief Represents permission levels for agents and navigation areas in the AwareNav plugin. * 
+ * This enum uses bitflags to allow combining multiple permission levels.
+ */
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"), Category="AwareNav|Permissions")
 enum class EAwPermissionLevel : uint8
 {

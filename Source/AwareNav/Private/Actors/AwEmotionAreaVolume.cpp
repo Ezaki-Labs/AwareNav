@@ -25,23 +25,18 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	TriggerVolume->SetGenerateOverlapEvents(true);
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 0.8, 1.f));
-
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 1.7, 1.f));
 	
-	HighEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HighEffectZoneActor"));
-	HighEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	HighEffectZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::High, HighEffectZoneActor);
-
-	DefaultZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("DefaultZoneActor"));
-	DefaultZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	DefaultZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::Default, DefaultZoneActor);
 
 	LowEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("LowEffectZoneActor"));
 	LowEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
 	LowEffectZoneActor->SetupAttachment(Root);
 	ZoneActorMap.Add(EAwEmotionIntensity::Low, LowEffectZoneActor);
+	
+	DefaultEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("DefaultEffectZoneActor"));
+	DefaultEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
+	DefaultEffectZoneActor->SetupAttachment(Root);
+	ZoneActorMap.Add(EAwEmotionIntensity::Default, DefaultEffectZoneActor);
 }
 
 void AAwEmotionAreaVolume::BeginPlay()
@@ -159,29 +154,22 @@ void AAwEmotionAreaVolume::UpdateZones()
 		return;
 	}
 
-	LowEffectRadius = Radius;
-	HighEffectRadius = Radius * 0.33f;
-	MidEffectRadius = HighEffectRadius * 2.0f;
+	DefaultEffectRadius = Radius;
+	LowEffectRadius = Radius * 2.0f;
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 0.8, 1.f));
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 1.7, 1.f));
 	
 	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(EmotionType);
 
-	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::High]->GetChildActor()))
-	{
-		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.HighCostArea, 0.0f, HighEffectRadius, Radius);
-		Zone->UpdateEmotionZone();
-	}
-
 	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Default]->GetChildActor()))
 	{
-		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.DefaultArea, HighEffectRadius, MidEffectRadius, Radius);
+		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.DefaultArea, 0.0f, DefaultEffectRadius);
 		Zone->UpdateEmotionZone();
 	}
 
 	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Low]->GetChildActor()))
 	{
-		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.LowCostArea, MidEffectRadius, LowEffectRadius, Radius);
+		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.LowEffectArea, DefaultEffectRadius, LowEffectRadius);
 		Zone->UpdateEmotionZone();
 	}
 }

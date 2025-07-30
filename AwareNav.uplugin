@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "AwareNav",
-	"Description": "AwareNav enhances AI pathfinding with emotion-driven navigation and permission-based access control. Supports dynamic fear, safety, nostalgia zones, and multi-level permission systems for smarter, context-aware AI behavior.",
+	"Description": "AwareNav is an advanced Unreal Engine plugin that augments AI pathfinding with emotion-aware navigation and flexible permission systems. It enables AI agents to dynamically respond to emotional zones—such as fear, safety, and nostalgia—and supports multi-level access control for nuanced, context-sensitive movement and decision-making.",
 	"Category": "Navigation",
 	"CreatedBy": "Eduard Zakaryan",
 	"CreatedByURL": "https://github.com/eduardzakaryan90",

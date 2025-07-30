@@ -40,18 +40,16 @@ void AAwEmotionZone::PostRegisterAllComponents()
 	UpdateEmotionZone();
 }
 
-void AAwEmotionZone::SetEmotionZoneParams(const TSubclassOf<UAwEmotionNavArea_Base>& InNavAreaClass, const float InInnerRadius, const float InOuterRadius, const float InMaxRadius)
+void AAwEmotionZone::SetEmotionZoneParams(const TSubclassOf<UAwEmotionNavArea_Base>& InNavAreaClass, const float InInnerRadius, const float InOuterRadius)
 {
 	NavAreaClass = InNavAreaClass;
 	InnerRadius = InInnerRadius;
 	OuterRadius = InOuterRadius;
-	MaxRadius = InMaxRadius;
 }
 
 void AAwEmotionZone::UpdateEmotionZone()
 {	
 	constexpr int32 NumSides = 8;
-	const float BoxHeight = MaxRadius - OuterRadius + 50.0f;
 
 	const FVector Center = GetActorLocation();
 
@@ -87,7 +85,7 @@ void AAwEmotionZone::UpdateEmotionZone()
 		const float Width = (A2 - A1).Size();         // tangential
 		const float Depth = (A1 - B1).Size();         // radial
 
-		const FVector BoxExtent = FVector(Depth * 0.5f, Width * 0.5f, BoxHeight); // X,Y,Z
+		const FVector BoxExtent = FVector(Depth * 0.5f, Width * 0.5f, 500.0f); // X,Y,Z
 
 		// Update the box
 		UBoxComponent* Box = Boxes[i];

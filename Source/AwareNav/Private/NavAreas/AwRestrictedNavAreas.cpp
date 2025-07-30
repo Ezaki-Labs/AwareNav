@@ -29,41 +29,41 @@ UClass* UAwRestrictedNavArea_Base::GetNavAreaByPermissionLevel(const EAwPermissi
 	}
 }
 
-EAwPermissionLevel UAwRestrictedNavArea_Base::GetPermissionLevelByNavArea(const UClass* NavAreaClass)
+EAwPermissionLevel UAwRestrictedNavArea_Base::GetPermissionLevelByNavArea(const UClass* NavArea)
 {
-    if (NavAreaClass == UAwRestrictedNavArea_None::StaticClass())
+    if (NavArea == UAwRestrictedNavArea_None::StaticClass())
     {
         return EAwPermissionLevel::None;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Low1::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Low1::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Low1;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Low2::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Low2::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Low2;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Mid1::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Mid1::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Mid1;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Mid2::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Mid2::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Mid2;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Mid3::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Mid3::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Mid3;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_Mid4::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_Mid4::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_Mid4;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_High1::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_High1::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_High1;
     }
-    else if (NavAreaClass == UAwRestrictedNavArea_High2::StaticClass())
+    else if (NavArea == UAwRestrictedNavArea_High2::StaticClass())
     {
         return EAwPermissionLevel::PermissionLevel_High2;
     }

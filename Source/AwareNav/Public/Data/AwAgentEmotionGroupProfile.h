@@ -4,7 +4,6 @@
 #include "Engine/DataTable.h"
 
 #include "Enums/AwEmotionType.h"
-#include "Data/AwEmotionCostConfig.h"
 
 #include "AwAgentEmotionGroupProfile.generated.h"
 
@@ -15,5 +14,5 @@ struct AWARENAV_API FAwAgentEmotionGroupProfile : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere)
-	TMap<EAwEmotionType, FAwEmotionCostConfig> EmotionalAreaCostMultipliers;
+	TMap<EAwEmotionType, float> EmotionalAreaCostMultipliers;
 };

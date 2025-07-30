@@ -48,43 +48,40 @@ UAwNavigationQueryFilter::UAwNavigationQueryFilter()
 
 
 	// Emotional Nav areas
+	FNavigationFilterArea FilterArea_FearDefault;
+	FilterArea_FearDefault.AreaClass = UAwEmotionNavArea_FearDefault::StaticClass();
+	Areas.Add(FilterArea_FearDefault);
+	
 	FNavigationFilterArea FilterArea_FearLow;
-	FilterArea_FearLow.AreaClass = UAwEmotionNavArea_FearLow::StaticClass();
+	FilterArea_FearLow.AreaClass = UAwEmotionNavArea_FearLowEffect::StaticClass();
 	Areas.Add(FilterArea_FearLow);
 	
-	FNavigationFilterArea FilterArea_FearMid;
-	FilterArea_FearMid.AreaClass = UAwEmotionNavArea_FearDefault::StaticClass();
-	Areas.Add(FilterArea_FearMid);
 	
-	FNavigationFilterArea FilterArea_FearHigh;
-	FilterArea_FearHigh.AreaClass = UAwEmotionNavArea_FearHigh::StaticClass();
-	Areas.Add(FilterArea_FearHigh);
-
+	FNavigationFilterArea FilterArea_HauntingDefault;
+	FilterArea_HauntingDefault.AreaClass = UAwEmotionNavArea_HauntingDefault::StaticClass();
+	Areas.Add(FilterArea_HauntingDefault);
+	
+	FNavigationFilterArea FilterArea_HauntingLow;
+	FilterArea_HauntingLow.AreaClass = UAwEmotionNavArea_HauntingLowEffect::StaticClass();
+	Areas.Add(FilterArea_HauntingLow);
+	
+	
+	FNavigationFilterArea FilterArea_SafetyDefault;
+	FilterArea_SafetyDefault.AreaClass = UAwEmotionNavArea_SafetyDefault::StaticClass();
+	Areas.Add(FilterArea_SafetyDefault);
 	
 	FNavigationFilterArea FilterArea_SafetyLow;
-	FilterArea_SafetyLow.AreaClass = UAwEmotionNavArea_SafetyLow::StaticClass();
+	FilterArea_SafetyLow.AreaClass = UAwEmotionNavArea_SafetyLowEffect::StaticClass();
 	Areas.Add(FilterArea_SafetyLow);
-	
-	FNavigationFilterArea FilterArea_SafetyMid;
-	FilterArea_SafetyMid.AreaClass = UAwEmotionNavArea_SafetyDefault::StaticClass();
-	Areas.Add(FilterArea_SafetyMid);
-	
-	FNavigationFilterArea FilterArea_SafetyHigh;
-	FilterArea_SafetyHigh.AreaClass = UAwEmotionNavArea_SafetyHigh::StaticClass();
-	Areas.Add(FilterArea_SafetyHigh);
 
 	
+	FNavigationFilterArea FilterArea_NostalgiaDefault;
+	FilterArea_NostalgiaDefault.AreaClass = UAwEmotionNavArea_NostalgiaDefault::StaticClass();
+	Areas.Add(FilterArea_NostalgiaDefault);
+	
 	FNavigationFilterArea FilterArea_NostalgiaLow;
-	FilterArea_NostalgiaLow.AreaClass = UAwEmotionNavArea_NostalgiaLow::StaticClass();
+	FilterArea_NostalgiaLow.AreaClass = UAwEmotionNavArea_NostalgiaLowEffect::StaticClass();
 	Areas.Add(FilterArea_NostalgiaLow);
-	
-	FNavigationFilterArea FilterArea_NostalgiaMid;
-	FilterArea_NostalgiaMid.AreaClass = UAwEmotionNavArea_NostalgiaDefault::StaticClass();
-	Areas.Add(FilterArea_NostalgiaMid);
-	
-	FNavigationFilterArea FilterArea_NostalgiaHigh;
-	FilterArea_NostalgiaHigh.AreaClass = UAwEmotionNavArea_NostalgiaHigh::StaticClass();
-	Areas.Add(FilterArea_NostalgiaHigh);
 	
 	bInstantiateForQuerier = true;
 }
@@ -116,8 +113,7 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 					continue;
 				}
 				if (bPermissionSystemEnabled && AreaData.AreaClass->IsChildOf(UAwRestrictedNavArea_Base::StaticClass()))
-				{
-					
+				{					
 					if (const auto RestrictedNavigationComponent = QuerierPawn->FindComponentByClass<UAwAgentPermissionProfileComponent>())
 					{
 						EAwPermissionLevel NavAreaPermissionLevel = UAwRestrictedNavArea_Base::GetPermissionLevelByNavArea(AreaData.AreaClass);
@@ -133,24 +129,19 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 				{
 					if (!bEmotionSystemEnabled)
 					{
-						Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), 1.0f);
+						//Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), 1.0f);
 						Filter.SetAreaCost(IntCastChecked<uint8>(AreaId), 1.0f);
 						continue;
 					}
 					
 					if (const auto AgentEmotionProfileComponent = QuerierPawn->FindComponentByClass<UAwAgentEmotionProfileComponent>())
 					{
-						TSubclassOf<UAwEmotionNavArea_Base> EmotionalNavArea_Base{AreaData.AreaClass};
-					
-						if (!AgentEmotionProfileComponent->GetEmotionalAreaCostMultipliers().Contains(EmotionalNavArea_Base))
-						{
-							continue;
-						}
-
-						const UNavArea* DefArea = (AreaData.AreaClass)->GetDefaultObject<UNavArea>();
+						const UAwEmotionNavArea_Base* AreaDefaultObj = (AreaData.AreaClass)->GetDefaultObject<UAwEmotionNavArea_Base>();
 						
-						const float NewCost = AgentEmotionProfileComponent->GetEmotionalAreaCostMultipliers()[EmotionalNavArea_Base] * DefArea->DefaultCost;
-						Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), NewCost);
+						const float AreaCostMultiplier = AgentEmotionProfileComponent->GetEmotionalAreaCostMultipliers().FindOrAdd(AreaDefaultObj->EmotionType, 1.0f);
+						
+						const float NewCost = AreaDefaultObj->GetAreaDynamicCost(AreaCostMultiplier);
+						//Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), NewCost);
 						Filter.SetAreaCost(IntCastChecked<uint8>(AreaId), NewCost);
 					}
 				}

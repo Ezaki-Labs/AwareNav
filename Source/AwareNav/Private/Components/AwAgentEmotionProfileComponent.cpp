@@ -12,12 +12,14 @@ UAwAgentEmotionProfileComponent::UAwAgentEmotionProfileComponent()
 void UAwAgentEmotionProfileComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>();
-	if (Settings && Settings->EmotionGroupProfilesTable.IsValid())
+
+	if (const UAwareNavSettings* Settings = GetDefault<UAwareNavSettings>())
 	{
-		EmotionGroupTable = Settings->EmotionGroupProfilesTable.LoadSynchronous();
-		check(EmotionGroupTable);
+		if (Settings->EmotionGroupProfilesTable.IsValid())
+		{
+			EmotionGroupTable = Settings->EmotionGroupProfilesTable.LoadSynchronous();
+			check(EmotionGroupTable);
+		}
 	}
 
 	SetAgentEmotionGroupProfile(EmotionGroupID);
@@ -46,13 +48,7 @@ void UAwAgentEmotionProfileComponent::SetAgentEmotionGroupProfile(const FName Gr
 
 	if (const FAwAgentEmotionGroupProfile* PermissionGroupRow = EmotionGroupTable->FindRow<FAwAgentEmotionGroupProfile>(GroupID, TEXT("Emotion Group Lookup")))
 	{
-		for (auto AreaMultiplier: PermissionGroupRow->EmotionalAreaCostMultipliers)
-		{
-			FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(AreaMultiplier.Key);
-			EmotionalAreaCostMultipliers.Add(EmotionNavAreaGroup.DefaultArea, AreaMultiplier.Value.DefaultCost);
-			EmotionalAreaCostMultipliers.Add(EmotionNavAreaGroup.LowCostArea, AreaMultiplier.Value.LowCost);
-			EmotionalAreaCostMultipliers.Add(EmotionNavAreaGroup.HighCostArea, AreaMultiplier.Value.HighCost);
-		}
+		EmotionAreaCostMultipliers = PermissionGroupRow->EmotionalAreaCostMultipliers;
 	}
 	else
 	{
@@ -67,23 +63,14 @@ void UAwAgentEmotionProfileComponent::BoostEmotion(const EAwEmotionType EmotionT
 		return;
 	}
 	
-	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(EmotionType);
-
-	auto AlterEmotionNavAreaCost = [this](const TSubclassOf<UAwEmotionNavArea_Base>& NavArea, float Multiplier)
+	if (EmotionAreaCostMultipliers.Contains(EmotionType))
 	{
-		if (EmotionalAreaCostMultipliers.Contains(NavArea))
-		{
-			EmotionalAreaCostMultipliers[NavArea] *= Multiplier;
-		}
-		else
-		{
-			EmotionalAreaCostMultipliers.Add(NavArea, Multiplier);
-		}
-	};
-
-	AlterEmotionNavAreaCost(EmotionNavAreaGroup.LowCostArea, BoostMultiplier);
-	AlterEmotionNavAreaCost(EmotionNavAreaGroup.DefaultArea, BoostMultiplier);
-	AlterEmotionNavAreaCost(EmotionNavAreaGroup.HighCostArea, BoostMultiplier);
+		EmotionAreaCostMultipliers[EmotionType] *= BoostMultiplier;
+	}
+	else
+	{
+		EmotionAreaCostMultipliers.Add(EmotionType, BoostMultiplier);
+	}
 
 	if (BoostTime > 0.0f)
 	{
@@ -92,23 +79,19 @@ void UAwAgentEmotionProfileComponent::BoostEmotion(const EAwEmotionType EmotionT
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(
 			TimerHandle,
-			FTimerDelegate::CreateLambda([WeakThis, EmotionNavAreaGroup, BoostMultiplier]()
+			FTimerDelegate::CreateLambda([WeakThis, EmotionType, BoostMultiplier]()
 			{
-				if (!WeakThis.IsValid()) return;
-
-				auto& MultiplierMap = WeakThis->EmotionalAreaCostMultipliers;
-
-				auto RevertCost = [&](const TSubclassOf<UAwEmotionNavArea_Base>& NavArea)
+				if (!WeakThis.IsValid())
 				{
-					if (MultiplierMap.Contains(NavArea))
-					{
-						MultiplierMap[NavArea] /= BoostMultiplier;
-					}
-				};
+					return;
+				}
 
-				RevertCost(EmotionNavAreaGroup.LowCostArea);
-				RevertCost(EmotionNavAreaGroup.DefaultArea);
-				RevertCost(EmotionNavAreaGroup.HighCostArea);
+				auto& MultiplierMap = WeakThis->EmotionAreaCostMultipliers;
+
+				if (MultiplierMap.Contains(EmotionType))
+				{
+					MultiplierMap[EmotionType] /= BoostMultiplier;
+				}
 			}),
 			BoostTime,
 			false
