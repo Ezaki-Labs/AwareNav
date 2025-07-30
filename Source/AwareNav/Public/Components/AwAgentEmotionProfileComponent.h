@@ -42,7 +42,7 @@ class AWARENAV_API UAwAgentEmotionProfileComponent : public UActorComponent
 
 	/** Mapping of emotion types to their area cost multipliers for this agent. */
 	UPROPERTY()
-	TMap<EAwEmotionType, float> EmotionAreaCostMultipliers;
+	TMap<UClass*, float> EmotionAreaCosts;
 
 	/** Set of emotion area volumes the agent is currently inside. */
 	UPROPERTY()
@@ -55,21 +55,13 @@ public:
 	 * Gets the current emotion area cost multipliers for this agent.
 	 * @return Map of emotion types to cost multipliers.
 	 */
-	TMap<EAwEmotionType, float> GetEmotionalAreaCostMultipliers() const {return EmotionAreaCostMultipliers;}
+	TMap<UClass*, float> GetEmotionalAreaCosts() const {return EmotionAreaCosts;}
 
 	/**
 	 * Sets the emotion group profile for this agent.
 	 * @param GroupID The identifier of the emotion group to assign.
 	 */
 	void SetAgentEmotionGroupProfile(const FName GroupID);
-
-	/**
-	 * Temporarily boosts the influence of a specific emotion type for this agent.
-	 * @param EmotionType The emotion type to boost.
-	 * @param BoostMultiplier The multiplier to apply to the emotion's cost.
-	 * @param BoostTime Duration of the boost in seconds (0 for permanent).
-	 */
-	void BoostEmotion(const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime = 0.0f);
 	
 	/**
 	 * Notifies the component that the agent has entered an emotion area volume.
@@ -86,4 +78,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	void CalculateFearNavCost(const int32 Courage);	
+	void CalculateSafetyNavCost(const int32 ComfortSeeking);
+	void CalculateMemoryBasedNavCosts(int32 Memory);
 };

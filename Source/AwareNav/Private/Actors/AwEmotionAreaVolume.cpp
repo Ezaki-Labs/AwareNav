@@ -1,8 +1,9 @@
 #include "Actors/AwEmotionAreaVolume.h"
 
+#include "AwareNavSettings.h"
+#include "AI/NavigationSystemBase.h"
 #include "Components/SphereComponent.h"
 
-#include "Actors/AwEmotionZone.h"
 #include "Components/AwAgentEmotionProfileComponent.h"
 #include "NavAreas/AwEmotionNavAreas.h"
 
@@ -12,6 +13,7 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
+	
 
 	TriggerVolume = CreateDefaultSubobject<USphereComponent>(TEXT("TriggerVolume"));
 	TriggerVolume->SetupAttachment(Root);
@@ -25,18 +27,15 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	TriggerVolume->SetGenerateOverlapEvents(true);
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 1.7, 1.f));
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * EmotionTriggerZoneRadiusMultiplier, 1.f));
 	
-
-	LowEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("LowEffectZoneActor"));
-	LowEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	LowEffectZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::Low, LowEffectZoneActor);
 	
-	DefaultEffectZoneActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("DefaultEffectZoneActor"));
-	DefaultEffectZoneActor->SetChildActorClass(AAwEmotionZone::StaticClass());
-	DefaultEffectZoneActor->SetupAttachment(Root);
-	ZoneActorMap.Add(EAwEmotionIntensity::Default, DefaultEffectZoneActor);
+	NavZoneActor = CreateDefaultSubobject<USphereComponent>(TEXT("DefaultEffectZoneActor"));
+	NavZoneActor->SetupAttachment(Root);
+	NavZoneActor->SetCanEverAffectNavigation(true);
+	NavZoneActor->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	NavZoneActor->bNavigationRelevant = true;
+	NavZoneActor->bDynamicObstacle = true;
 }
 
 void AAwEmotionAreaVolume::BeginPlay()
@@ -153,25 +152,13 @@ void AAwEmotionAreaVolume::UpdateZones()
 	{
 		return;
 	}
-
-	DefaultEffectRadius = Radius;
-	LowEffectRadius = Radius * 2.0f;
 	
-	TriggerVolume->SetSphereRadius(FMath::Max(Radius * 1.7, 1.f));
+	TriggerVolume->SetSphereRadius(FMath::Max(Radius * EmotionTriggerZoneRadiusMultiplier, 1.f));
+	NavZoneActor->SetSphereRadius(Radius);
 	
-	const FEmotionNavAreaGroup EmotionNavAreaGroup = UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(EmotionType);
-
-	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Default]->GetChildActor()))
-	{
-		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.DefaultArea, 0.0f, DefaultEffectRadius);
-		Zone->UpdateEmotionZone();
-	}
-
-	if (AAwEmotionZone* Zone = Cast<AAwEmotionZone>(ZoneActorMap[EAwEmotionIntensity::Low]->GetChildActor()))
-	{
-		Zone->SetEmotionZoneParams(EmotionNavAreaGroup.LowEffectArea, DefaultEffectRadius, LowEffectRadius);
-		Zone->UpdateEmotionZone();
-	}
+	NavZoneActor->SetAreaClassOverride(UAwEmotionNavArea_Base::GetNavAreaByEmotionType(EmotionType));
+	
+	FNavigationSystem::UpdateActorAndComponentData(*this);
 }
 
 #if WITH_EDITOR
@@ -181,8 +168,8 @@ void AAwEmotionAreaVolume::PostEditChangeProperty(FPropertyChangedEvent& Propert
 
 	const FName PropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, EmotionType) ||
-		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, Radius))
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, Radius) ||
+		PropertyName == GET_MEMBER_NAME_CHECKED(AAwEmotionAreaVolume, EmotionType))
 	{
 		UpdateZones();
 	}

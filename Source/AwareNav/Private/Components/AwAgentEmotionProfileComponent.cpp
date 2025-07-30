@@ -39,6 +39,51 @@ void UAwAgentEmotionProfileComponent::EndPlay(const EEndPlayReason::Type EndPlay
 	Super::EndPlay(EndPlayReason);
 }
 
+void UAwAgentEmotionProfileComponent::CalculateFearNavCost(int32 Courage)
+{
+	Courage = FMath::Clamp(Courage, 1, 20);
+
+	float FearNavCost = 1.0f;
+	if (Courage > 10)
+	{
+		// From 10 to 20 → 1.0 → 0.5
+		const float T = (Courage - 10) / 10.0f;
+		FearNavCost = FMath::Lerp(1.0f, 0.5f, T);
+	}
+	else if (Courage < 10)
+	{
+		// From 10 to 1 → 1.0 → 3.0
+		const float T = (10 - Courage) / 9.0f;
+		FearNavCost = FMath::Lerp(1.0f, 3.0f, T);
+	}
+	
+	EmotionAreaCosts.Add(UAwEmotionNavArea_Fear::StaticClass(), FearNavCost);
+}
+
+void UAwAgentEmotionProfileComponent::CalculateSafetyNavCost(int32 ComfortSeeking)
+{
+	ComfortSeeking = FMath::Clamp(ComfortSeeking, 1, 20);
+
+	const float T = (ComfortSeeking - 1) / 19.0f; // Range: 0.0 to 1.0
+	const float SafetyNavCost =  FMath::Lerp(1.0f, 0.3f, T);
+	
+	EmotionAreaCosts.Add(UAwEmotionNavArea_Safety::StaticClass(), SafetyNavCost);
+}
+
+void UAwAgentEmotionProfileComponent::CalculateMemoryBasedNavCosts(int32 Memory)
+{
+	Memory = FMath::Clamp(Memory, 1, 20);
+	const float T = (Memory - 1) / 19.0f;
+	
+	const float FearNavCost = EmotionAreaCosts.FindOrAdd(UAwEmotionNavArea_Fear::StaticClass(), 1.0f); // 0.5–3.0
+	const float HauntingNavCost = FMath::Lerp(1.0f, FearNavCost, T);	
+	EmotionAreaCosts.Add(UAwEmotionNavArea_Haunting::StaticClass(), HauntingNavCost);
+	
+	const float SafetyNavCost = EmotionAreaCosts.FindOrAdd(UAwEmotionNavArea_Safety::StaticClass(), 1.0f); // 0.3–1.0
+	const float NostalgiaNavCost = FMath::Lerp(1.0f, SafetyNavCost, T);	
+	EmotionAreaCosts.Add(UAwEmotionNavArea_Nostalgia::StaticClass(), NostalgiaNavCost);	
+}
+
 void UAwAgentEmotionProfileComponent::SetAgentEmotionGroupProfile(const FName GroupID)
 {
 	if (GroupID.IsNone())
@@ -48,54 +93,13 @@ void UAwAgentEmotionProfileComponent::SetAgentEmotionGroupProfile(const FName Gr
 
 	if (const FAwAgentEmotionGroupProfile* PermissionGroupRow = EmotionGroupTable->FindRow<FAwAgentEmotionGroupProfile>(GroupID, TEXT("Emotion Group Lookup")))
 	{
-		EmotionAreaCostMultipliers = PermissionGroupRow->EmotionalAreaCostMultipliers;
+		CalculateFearNavCost(PermissionGroupRow->Courage);
+		CalculateSafetyNavCost(PermissionGroupRow->ComfortSeeking);
+		CalculateMemoryBasedNavCosts(PermissionGroupRow->Memory);
 	}
 	else
 	{
 		checkf(false, TEXT("Invalid Emotion GroupID"));
-	}
-}
-
-void UAwAgentEmotionProfileComponent::BoostEmotion(const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime)
-{
-	if (BoostMultiplier <= 0.0f)
-	{
-		return;
-	}
-	
-	if (EmotionAreaCostMultipliers.Contains(EmotionType))
-	{
-		EmotionAreaCostMultipliers[EmotionType] *= BoostMultiplier;
-	}
-	else
-	{
-		EmotionAreaCostMultipliers.Add(EmotionType, BoostMultiplier);
-	}
-
-	if (BoostTime > 0.0f)
-	{
-		TWeakObjectPtr<UAwAgentEmotionProfileComponent> WeakThis(this);
-
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(
-			TimerHandle,
-			FTimerDelegate::CreateLambda([WeakThis, EmotionType, BoostMultiplier]()
-			{
-				if (!WeakThis.IsValid())
-				{
-					return;
-				}
-
-				auto& MultiplierMap = WeakThis->EmotionAreaCostMultipliers;
-
-				if (MultiplierMap.Contains(EmotionType))
-				{
-					MultiplierMap[EmotionType] /= BoostMultiplier;
-				}
-			}),
-			BoostTime,
-			false
-		);
 	}
 }
 

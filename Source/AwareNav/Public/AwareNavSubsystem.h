@@ -103,25 +103,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Assigns an emotion group profile to the specified agent."))
     void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
 
-    /**
-     * Temporarily boosts a specific emotion for an agent.
-     * @param Agent The agent actor whose emotion will be boosted.
-     * @param EmotionType The type of emotion to boost.
-     * @param BoostMultiplier The multiplier to apply to the emotion.
-     */
-    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Temporarily boosts a specific emotion for an agent."))
-    void BoostEmotion(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier);
-
-    /**
-     * Temporarily boosts a specific emotion for an agent for a set duration.
-     * @param Agent The agent actor whose emotion will be boosted.
-     * @param EmotionType The type of emotion to boost.
-     * @param BoostMultiplier The multiplier to apply to the emotion.
-     * @param BoostTime How long (in seconds) the boost should last.
-     */
-    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Temporarily boosts a specific emotion for an agent for a set duration."))
-    void BoostEmotionTemporarily(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime);
-
     // ----------- Emotion Area Volume -----------
 
     /**

@@ -56,32 +56,6 @@ void UAwareNavSubsystem::SetAgentEmotionGroupProfile(const AActor* Agent, const 
 	}
 }
 
-void UAwareNavSubsystem::BoostEmotion(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier)
-{
-	if (!IsValid(Agent))
-	{
-		return;
-	}
-	
-	if (UAwAgentEmotionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentEmotionProfileComponent>(); IsValid(PermissionProfileComponent))
-	{
-		PermissionProfileComponent->BoostEmotion(EmotionType, BoostMultiplier);
-	}
-}
-
-void UAwareNavSubsystem::BoostEmotionTemporarily(const AActor* Agent, const EAwEmotionType EmotionType, const float BoostMultiplier, const float BoostTime)
-{
-	if (!IsValid(Agent))
-	{
-		return;
-	}
-	
-	if (UAwAgentEmotionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentEmotionProfileComponent>(); IsValid(PermissionProfileComponent))
-	{
-		PermissionProfileComponent->BoostEmotion(EmotionType, BoostMultiplier, BoostTime);
-	}
-}
-
 void UAwareNavSubsystem::SpawnEmotionArea(const FEmotionAreaSpawnParams& SpawnParams)
 {
 	UWorld* World = GetWorld();

@@ -37,26 +37,6 @@ public:
 
 	/** Cached DataTable for emotions. Used internally. */
 	TSoftObjectPtr<UDataTable> CachedEmotionTable;
-	
-	/** Cost configuration for the Fear emotion. */
-	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (ToolTip="Cost configuration for the Fear emotion.", EditCondition = "bEnableEmotionSystem"))
-	float FearCost = 1.5f;
-	
-	/** Cost configuration for the Haunting emotion. */
-	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (ToolTip="Cost configuration for the Haunting emotion.", EditCondition = "bEnableEmotionSystem"))
-	float HauntingCost = 1.2f;
-	
-	/** Cost configuration for the Safety emotion. */
-	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (ToolTip="Cost configuration for the Safety emotion.", EditCondition = "bEnableEmotionSystem"))
-	float SafetyCost = 0.5f;
-	
-	/** Cost configuration for the Nostalgia emotion. */
-	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (ToolTip="Cost configuration for the Nostalgia emotion.", EditCondition = "bEnableEmotionSystem"))
-	float NostalgiaCost = 0.8f;
-	
-	/** Difference in emotion effect to be considered as a low effect. */
-	UPROPERTY(Config, EditAnywhere, Category="Emotions", meta = (ToolTip="Difference in emotion effect to be considered as a low effect.", EditCondition = "bEnableEmotionSystem"))
-	float EmotionLowEffectDiff = 0.3f;
 #pragma endregion
 
 protected:

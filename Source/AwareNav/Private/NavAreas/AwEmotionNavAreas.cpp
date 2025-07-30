@@ -2,42 +2,41 @@
 
 #include "NavAreas/NavArea_Default.h"
 
-float UAwEmotionNavArea_Base::GetAreaDynamicCost(const float CostMultiplier) const
+EAwEmotionType UAwEmotionNavArea_Base::GetEmotionTypeByNavArea(const UClass* EmotionType)
 {
-	const float DefaultEffectAreaModifiedCost = DefaultEffectAreaCost * CostMultiplier;
+	if (EmotionType == UAwEmotionNavArea_Fear::StaticClass())
+	{
+		return EAwEmotionType::Fear;
+	}
+	if (EmotionType == UAwEmotionNavArea_Haunting::StaticClass())
+	{
+		return EAwEmotionType::Haunting;
+	}
+	if (EmotionType == UAwEmotionNavArea_Safety::StaticClass())
+	{
+		return EAwEmotionType::Safety;
+	}
+	if (EmotionType == UAwEmotionNavArea_Nostalgia::StaticClass())
+	{
+		return EAwEmotionType::Nostalgia;
+	}
 
-	if (bIsLowEffectArea)
-	{
-		if (DefaultEffectAreaModifiedCost > 1.0f)
-		{
-			return FMath::Max(DefaultEffectAreaModifiedCost - EmotionLowEffectDiff, 1.0f);
-		}
-		if (DefaultEffectAreaModifiedCost < 1.0f)
-		{
-			return FMath::Min(DefaultEffectAreaModifiedCost + EmotionLowEffectDiff, 1.0f);
-		}
-	}
-	else
-	{
-		return DefaultEffectAreaModifiedCost;
-	}
-		
-	return 1.0f;
+	return EAwEmotionType::None;
 }
 
-FEmotionNavAreaGroup UAwEmotionNavArea_Base::GetNavAreaGroupByEmotionType(const EAwEmotionType EmotionType)
+UClass* UAwEmotionNavArea_Base::GetNavAreaByEmotionType(const EAwEmotionType EmotionType)
 {
 	switch (EmotionType)
 	{
 	case EAwEmotionType::Fear:
-		return FEmotionNavAreaGroup {UAwEmotionNavArea_FearDefault::StaticClass(), UAwEmotionNavArea_FearLowEffect::StaticClass()};
+		return UAwEmotionNavArea_Fear::StaticClass();
 	case EAwEmotionType::Haunting:
-		return FEmotionNavAreaGroup {UAwEmotionNavArea_HauntingDefault::StaticClass(), UAwEmotionNavArea_HauntingLowEffect::StaticClass()};
+		return UAwEmotionNavArea_Haunting::StaticClass();
 	case EAwEmotionType::Safety:
-		return FEmotionNavAreaGroup {UAwEmotionNavArea_SafetyDefault::StaticClass(), UAwEmotionNavArea_SafetyLowEffect::StaticClass()};
+		return UAwEmotionNavArea_Safety::StaticClass();
 	case EAwEmotionType::Nostalgia:
-		return FEmotionNavAreaGroup {UAwEmotionNavArea_NostalgiaDefault::StaticClass(), UAwEmotionNavArea_NostalgiaLowEffect::StaticClass()};
+		return UAwEmotionNavArea_Nostalgia::StaticClass();
 	default:
-		return FEmotionNavAreaGroup {UNavArea_Default::StaticClass(), UNavArea_Default::StaticClass()};
+		return UNavArea_Default::StaticClass();
 	}
 }
