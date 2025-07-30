@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AwareNavSubsystem.h"
 #include "GameFramework/Actor.h"
 
 #include "Enums/AwEmotionType.h"
@@ -32,7 +33,7 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 
     /** The type of emotion this area represents. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AwareNav|Emotions", meta = (AllowPrivateAccess = "true", ToolTip = "The type of emotion this area represents."))
-    EAwEmotionType EmotionType = EAwEmotionType::Fear;
+    EAwEmotionType EmotionType = EAwEmotionType::None;
 
     /** The radius of the emotion area. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AwareNav|Emotions", meta = (AllowPrivateAccess = "true", ClampMin = 0.0, ToolTip = "The radius of the emotion area."))
@@ -70,6 +71,8 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
 
 public:
     AAwEmotionAreaVolume();
+    
+    static AAwEmotionAreaVolume* SpawnEmotionArea(UWorld* World, const FEmotionAreaSpawnParams& SpawnParams);
 
     /**
      * Set the emotion type and radius for this area.

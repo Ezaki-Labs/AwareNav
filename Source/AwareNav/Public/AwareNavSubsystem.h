@@ -103,6 +103,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Assigns an emotion group profile to the specified agent."))
     void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
 
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+    void AdjustEmotion(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta);
+
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+    void AdjustEmotionTemporarily(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime);
+
     // ----------- Emotion Area Volume -----------
 
     /**

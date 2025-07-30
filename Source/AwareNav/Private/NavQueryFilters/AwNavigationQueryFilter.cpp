@@ -109,19 +109,16 @@ void UAwNavigationQueryFilter::InitializeFilter(const ANavigationData& NavData, 
 				}
 				else if (AreaData.AreaClass->IsChildOf(UAwEmotionNavArea_Base::StaticClass()))
 				{
-					if (!bEmotionSystemEnabled)
+					const UAwAgentEmotionProfileComponent* AgentEmotionProfileComponent = QuerierPawn->FindComponentByClass<UAwAgentEmotionProfileComponent>();
+					if (!bEmotionSystemEnabled || !IsValid(AgentEmotionProfileComponent))
 					{
 						Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), 0.0f);
 						Filter.SetAreaCost(IntCastChecked<uint8>(AreaId), 1.0f);
 						continue;
 					}
 					
-					if (const auto AgentEmotionProfileComponent = QuerierPawn->FindComponentByClass<UAwAgentEmotionProfileComponent>())
-					{
-						const float NewCost = AgentEmotionProfileComponent->GetEmotionalAreaCosts().FindOrAdd(AreaData.AreaClass, 1.0f);
-						//Filter.SetFixedAreaEnteringCost(IntCastChecked<uint8>(AreaId), NewCost);
-						Filter.SetAreaCost(IntCastChecked<uint8>(AreaId), NewCost);
-					}
+					const float NewCost = AgentEmotionProfileComponent->GetEmotionalAreaCosts().FindOrAdd(AreaData.AreaClass, 1.0f);
+					Filter.SetAreaCost(IntCastChecked<uint8>(AreaId), NewCost);
 				}
 			}
 		}

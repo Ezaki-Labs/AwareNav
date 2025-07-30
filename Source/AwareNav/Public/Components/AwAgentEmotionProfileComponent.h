@@ -1,11 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/AwEmotionAreaVolume.h"
 #include "Components/ActorComponent.h"
+
+#include "Data/AwAgentEmotionalAbilityGroupProfile.h"
+#include "Enums/AwEmotionType.h"
 
 #include "AwAgentEmotionProfileComponent.generated.h"
 
+class AAwEmotionAreaVolume;
 class UAwEmotionNavArea_Base;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnEnteredEmotionVolume, AAwEmotionAreaVolume*, EmotionAreaVolume);
@@ -48,6 +51,8 @@ class AWARENAV_API UAwAgentEmotionProfileComponent : public UActorComponent
 	UPROPERTY()
 	TSet<AAwEmotionAreaVolume*> AreasAgentIsIn;
 
+	FEmotionalAbilityGroup AbilityGroup;
+
 public:
 	UAwAgentEmotionProfileComponent();
 
@@ -62,6 +67,8 @@ public:
 	 * @param GroupID The identifier of the emotion group to assign.
 	 */
 	void SetAgentEmotionGroupProfile(const FName GroupID);
+	
+	void AdjustEmotion(const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime = 0.0f);
 	
 	/**
 	 * Notifies the component that the agent has entered an emotion area volume.
@@ -79,7 +86,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
-	void CalculateFearNavCost(const int32 Courage);	
-	void CalculateSafetyNavCost(const int32 ComfortSeeking);
-	void CalculateMemoryBasedNavCosts(int32 Memory);
+	void CalculateNavCosts();	
+	void CalculateSafetyNavCost();
+	void CalculateMemoryBasedNavCosts();
 };

@@ -33,7 +33,7 @@ void UAwareNavSubsystem::SetAgentPermissionGroupProfile(const AActor* Agent, con
 
 void UAwareNavSubsystem::SetAreaPermission(AAwRestrictedAreaVolume* Area, const EAwPermissionLevel NewPermission)
 {
-	if (!Area)
+	if (!IsValid(Area))
 	{
 		return;
 	}
@@ -56,6 +56,33 @@ void UAwareNavSubsystem::SetAgentEmotionGroupProfile(const AActor* Agent, const 
 	}
 }
 
+void UAwareNavSubsystem::AdjustEmotion(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta)
+{
+	if (!IsValid(Agent))
+	{
+		return;
+	}
+	
+	if (UAwAgentEmotionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentEmotionProfileComponent>(); IsValid(PermissionProfileComponent))
+	{
+		PermissionProfileComponent->AdjustEmotion(AbilityType, Delta);
+	}	
+}
+
+void UAwareNavSubsystem::AdjustEmotionTemporarily(const AActor* Agent, const EEmotionalAbilityType AbilityType,
+	const int32 Delta, const float AdjustTime)
+{
+	if (!IsValid(Agent))
+	{
+		return;
+	}
+	
+	if (UAwAgentEmotionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentEmotionProfileComponent>(); IsValid(PermissionProfileComponent))
+	{
+		PermissionProfileComponent->AdjustEmotion(AbilityType, Delta, AdjustTime);
+	}	
+}
+
 void UAwareNavSubsystem::SpawnEmotionArea(const FEmotionAreaSpawnParams& SpawnParams)
 {
 	UWorld* World = GetWorld();
@@ -64,22 +91,6 @@ void UAwareNavSubsystem::SpawnEmotionArea(const FEmotionAreaSpawnParams& SpawnPa
 		return;
 	}
 	
-	AAwEmotionAreaVolume* Template = NewObject<AAwEmotionAreaVolume>();
-	Template->SetAreaParams(SpawnParams.EmotionType, SpawnParams.Radius);
-
-	FActorSpawnParameters Params;
-	Params.Template = Template;
-	
-	if (AAwEmotionAreaVolume* Spawned = World->SpawnActor<AAwEmotionAreaVolume>(AAwEmotionAreaVolume::StaticClass(), SpawnParams.SpawnLocation, FRotator::ZeroRotator, Params))
-	{
-		if (SpawnParams.bHasLifeSpan)
-		{
-			Spawned->SetLifeSpan(SpawnParams.LifeSpan);
-		}
-		if (SpawnParams.bReducing)
-		{
-			Spawned->EnableAreaReducing(SpawnParams.ReduceIntervalInSeconds, SpawnParams.ReduceAmountPerInterval);
-		}
-	}
+	AAwEmotionAreaVolume::SpawnEmotionArea(World, SpawnParams);
 }
 #pragma endregion

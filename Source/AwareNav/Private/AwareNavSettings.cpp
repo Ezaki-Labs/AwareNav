@@ -1,6 +1,6 @@
 #include "AwareNavSettings.h"
 
-#include "Data/AwAgentEmotionGroupProfile.h"
+#include "Data/AwAgentEmotionalAbilityGroupProfile.h"
 #include "Data/AwAgentPermissionGroupProfile.h"
 
 #if WITH_EDITOR
@@ -14,7 +14,7 @@ void UAwareNavSettings::PostInitProperties()
 
 	// Optionally validate on load
 	ValidateTable<FAwAgentPermissionGroupProfile>(PermissionGroupProfilesTable, TEXT("PermissionGroupProfilesTable"));
-	ValidateTable<FAwAgentEmotionGroupProfile>(EmotionGroupProfilesTable, TEXT("EmotionGroupProfilesTable"));
+	ValidateTable<FAwAgentEmotionalAbilityGroupProfile>(EmotionGroupProfilesTable, TEXT("EmotionGroupProfilesTable"));
 }
 
 void UAwareNavSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -39,7 +39,7 @@ void UAwareNavSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	}
 	else if (PropertyName == GET_MEMBER_NAME_CHECKED(UAwareNavSettings, EmotionGroupProfilesTable))
 	{
-		if (!ValidateTable<FAwAgentEmotionGroupProfile>(EmotionGroupProfilesTable, TEXT("EmotionGroupProfilesTable")))
+		if (!ValidateTable<FAwAgentEmotionalAbilityGroupProfile>(EmotionGroupProfilesTable, TEXT("EmotionGroupProfilesTable")))
 		{
 			Modify();
 			EmotionGroupProfilesTable = CachedEmotionTable;

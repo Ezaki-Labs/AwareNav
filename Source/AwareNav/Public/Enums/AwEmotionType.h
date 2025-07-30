@@ -23,3 +23,16 @@ enum class EAwEmotionType : uint8
     /** Nostalgia emotion, can influence agents to prefer certain areas. */
     Nostalgia			UMETA(DisplayName = "Nostalgia"),
 };
+
+UENUM(BlueprintType)
+enum class EEmotionalAbilityType : uint8
+{
+    Courage         UMETA(DisplayName = "Courage"),
+    ComfortSeeking  UMETA(DisplayName = "Comfort Seeking"),
+    Memory          UMETA(DisplayName = "Memory"),
+
+    // Future entries:
+    // Empathy,
+    // Resilience,
+    // Awareness,
+};

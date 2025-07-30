@@ -38,6 +38,26 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	NavZoneActor->bDynamicObstacle = true;
 }
 
+AAwEmotionAreaVolume* AAwEmotionAreaVolume::SpawnEmotionArea(UWorld* World, const FEmotionAreaSpawnParams& SpawnParams)
+{
+	if (AAwEmotionAreaVolume* Spawned = World->SpawnActor<AAwEmotionAreaVolume>(SpawnParams.SpawnLocation, FRotator::ZeroRotator))
+	{
+		Spawned->SetAreaParams(SpawnParams.EmotionType, SpawnParams.Radius);
+		if (SpawnParams.bHasLifeSpan)
+		{
+			Spawned->SetLifeSpan(SpawnParams.LifeSpan);
+		}
+		if (SpawnParams.bReducing)
+		{
+			Spawned->EnableAreaReducing(SpawnParams.ReduceIntervalInSeconds, SpawnParams.ReduceAmountPerInterval);
+		}
+
+		return Spawned;
+	}
+
+	return nullptr;
+}
+
 void AAwEmotionAreaVolume::BeginPlay()
 {
 	Super::BeginPlay();
@@ -76,6 +96,8 @@ void AAwEmotionAreaVolume::SetAreaParams(const EAwEmotionType InEmotionType, con
 {
 	EmotionType = InEmotionType;
 	Radius = InRadius;
+
+	UpdateZones();
 }
 
 void AAwEmotionAreaVolume::EnableAreaReducing(const float ReduceIntervalInSeconds, const float ReduceAmount)
