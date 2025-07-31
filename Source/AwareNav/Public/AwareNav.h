@@ -11,6 +11,3 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 };
-
-// TODO: add tooltips
-// TODO: add docs

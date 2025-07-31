@@ -26,12 +26,18 @@ struct AWARENAV_API FEmotionalAbilityGroup
 	int32 Memory = 10;	
 };
 
-
+/**
+ * @brief DataTable row representing an agent's emotional ability group profile.
+ *
+ * This struct is used to define a named group of emotional abilities for agents,
+ * allowing designers to assign and manage emotional traits via DataTables.
+ */
 USTRUCT(BlueprintType)
 struct AWARENAV_API FAwAgentEmotionalAbilityGroupProfile : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, meta = (ToolTip = "Emotional resilience against fear. Higher value means less influence from fear zones."))
+    /** The set of emotional abilities for this group profile. */
+	UPROPERTY(EditAnywhere, meta = (ToolTip = "The set of emotional abilities for this group profile."))
 	FEmotionalAbilityGroup AbilityGroup;
 };

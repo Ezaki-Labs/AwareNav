@@ -103,10 +103,23 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Assigns an emotion group profile to the specified agent."))
     void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
 
-    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+    /**
+     * Adjusts the specified emotional ability value for an agent.
+     * @param Agent The agent actor whose ability will be adjusted.
+     * @param AbilityType The type of emotional ability to adjust.
+     * @param Delta The amount to adjust the ability by (positive or negative).
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Adjusts the specified emotional ability value for an agent."))
     void AdjustEmotion(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta);
 
-    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions")
+    /**
+     * Temporarily adjusts the specified emotional ability value for an agent, reverting after a set time.
+     * @param Agent The agent actor whose ability will be adjusted.
+     * @param AbilityType The type of emotional ability to adjust.
+     * @param Delta The amount to adjust the ability by (positive or negative).
+     * @param AdjustTime How long (in seconds) the adjustment should last before reverting.
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Temporarily adjusts the specified emotional ability value for an agent, reverting after a set time."))
     void AdjustEmotionTemporarily(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime);
 
     // ----------- Emotion Area Volume -----------

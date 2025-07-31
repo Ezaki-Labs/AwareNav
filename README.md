@@ -1,68 +1,149 @@
-# AwareNav
+# 🧠 AwareNav — Emotion & Permission-Based Navigation for Unreal Engine
 
-AwareNav is a plugin for Unreal Engine 5.4.4 that enhances navigation systems with awareness-driven pathfinding and AI navigation features. It is designed to help developers create more intelligent and context-aware AI agents in their Unreal Engine projects.
+**AwareNav** is a modular Unreal Engine plugin that enhances AI navigation with **emotion-aware pathfinding** and **permission-based access control**. Ideal for games with dynamic AI personalities, stealth, horror, or story-driven behaviour systems.
 
-## Features
+---
 
-- **Awareness-Based Pathfinding:** Integrates awareness levels into navigation, allowing AI to choose paths based on environmental stimuli or agent states.
-- **Customizable Navigation Queries:** Extend or override default navigation queries to account for custom awareness logic.
-- **Seamless UE Integration:** Works with Unreal Engine's built-in navigation system and AI controllers.
-- **Blueprint and C++ Support:** Expose core functionality to Blueprints for rapid prototyping, with full C++ extensibility.
-- **Debugging Tools:** Includes visualization and debugging utilities for awareness zones and navigation decisions.
+## 🔑 Features
 
-## Installation
+### 🎭 Emotion-Aware Navigation *(Optional)*
 
-1. Copy the `AwareNav` plugin folder into your project's `Plugins` directory.
-2. Regenerate project files (right-click `.uproject` > "Generate Visual Studio project files").
-3. Open your project in Unreal Engine.
-4. Enable the plugin via `Edit > Plugins > Project > AwareNav`.
+- Define **emotional zones**: Fear, Safety, Nostalgia, Haunting
+- Each AI agent has traits: `Courage`, `ComfortSeeking`, `Memory`
+- Emotion zones alter navmesh costs dynamically per agent
+- Emotion strength is stat-driven and customizable
 
-## Usage
+### 🔐 Permission-Based Navigation *(Optional)*
 
-### Basic Setup
+- Tag nav areas with **access permissions**
+- Agents have permission flags (bitmask)
+- Navigation automatically respects allowed areas
 
-1. Add the `AwareNav` component to your AI-controlled actors.
-2. Configure awareness parameters in the component details panel or via C++.
-3. Use provided Blueprint nodes or C++ API to trigger awareness-based navigation.
+### ⚙️ Fully Configurable
 
-### Example: Blueprint Integration
+- Enable/disable Emotion and Permission systems independently
+- All behaviour is configurable via **Project Settings > AwareNav**
 
-```blueprint
-// Pseudocode: Use the "Find Aware Path" node to get a path considering awareness
-AwareNavComponent->FindAwarePath(StartLocation, EndLocation, AwarenessLevel)
+---
+
+## 🚀 Getting Started
+
+### ✅ Install the Plugin
+
+1. Copy the `AwareNav` folder to your project's `Plugins/` directory
+2. Open Unreal Editor → **Enable the plugin** in Plugin Browser
+3. Restart the editor
+
+### 🧠 Emotion System Setup
+
+1. Create data table with `FAwAgentEmotionalAbilityGroupProfile` type and set it in **Project Settings > AwareNav**
+2. Set traits per `GroupID` in the data table:
+   - `Courage` → resists fear zones
+   - `ComfortSeeking` → prefers safe zones
+   - `Memory` → amplifies nostalgia/haunting response
+3. Add `UAwAgentEmotionProfileComponent` to all AI characters, which should have emotions
+4. Set `GroupId` in the component
+5. Place `AwEmotionalAreaVolume` actors in your level, or spawn them dynamically
+6. NavMesh cost is auto-adjusted per agent during pathfinding
+
+### 🔐 Permission System Setup
+
+1. Create data table with `FAwAgentPermissionGroupProfile` type and set it in **Project Settings > AwareNav**
+2. Define `EPermissionLevel` bitmask flags per `GroupID` in the data table
+3. Add `UAwAgentPermissionProfileComponent` to all AI characters, which should have permissions
+4. Set `GroupId` in the component
+5. Place `AAwRestrictedAreaVolume` actors in your level, and tag areas with required permissions
+6. Agents will avoid restricted areas
+
+
+*Emotion- and permission-based navigation require the use of *`UAwNavigationQueryFilter`*, which enables dynamic, agent-specific cost calculations. If it’s the only NavigationQueryFilter used in your project, you can assign it directly in the AIController as the default query filter.*
+
+---
+
+## 🧩 Example
+
+**Emotional Ability Group Profile data table:**
+| GroupId    | Traits (Courage/Comfort/Memory) |
+| ---------- | ------------------------------- |
+| Civilian   | 8 / 16 / 18                     |
+| Guard Dog  | 18 / 12 / 11                    |
+| Rat        | 2 / 18 / 20                     |
+
+**Permission Group Profile data table:**
+| GroupId        | Permissions                   |
+| -------------- | ----------------------------- |
+| Civilian       | Low level permissions only    |
+| Security Drone | Full permissions              |
+| Guard Dog      | Low and mid level permissions |
+
+**Agents setup:**
+| Agent Type     | Emotional Ability Group ID | Permission Group ID     |
+| -------------- | -------------------------- | ----------------------- |
+| Civilian       | Civilian                   | Civilian                |
+| Security Drone | `Not Enabled - Ignored`    | Security Drone          |
+| Guard Dog      | Guard Dog                  | Guard Dog               |
+| Rat            | Rat                        | `Not Enabled - Ignored` |
+
+Each agent navigates the same map differently based on emotion and access control.
+
+---
+
+### 🧠 `UAwareNavSubsystem`
+
+`UAwareNavSubsystem` is the main access point for all AwareNav systems. It provides access to emotion- and permission-based subsystems and reflects the plugin’s runtime configuration.
+
+```Example Usage
+UAwareNavSubsystem* AwareNav = UAwareNavSubsystem::Get(this);
+AwareNav->SetAgentEmotionGroupProfile(AgentRef, TEXT("Civilian"));
+...
+AwareNav->AdjustEmotionTemporarily(AgentRef, EEmotionalAbilityType::Courage, 5, 30.0f);
+...
+FEmotionAreaSpawnParams SpawnParams;
+SpawnParams.SpawnLocation = GetActorLocation();
+SpawnParams.EmotionType = EAwEmotionType::Fear;
+SpawnParams.Radius = 500.0f;
+SpawnParams.bHasLifeSpan = true;
+SpawnParams.LifeSpan = 50.0f;
+SpawnParams.bReducing = true;
+SpawnParams.ReduceIntervalInSeconds = 3.0f;
+SpawnParams.ReduceAmountPerInterval = 50.0f;
+
+AwareNav->SpawnEmotionArea(SpawnParams)
+
 ```
 
-### Example: C++ Integration
+**List of public methods of** `UAwareNavSubsystem`
+| Method                            | Purpose                                                                                             |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `SetAgentPermissionGroupProfile`  | Assigns a permission group profile to the specified agent.                                          |
+| `SetAreaPermission`               | Sets the permission level for a restricted area volume.                                             |
+| `SetAgentEmotionGroupProfile`     | Assigns an emotion group profile to the specified agent.                                            |
+| `AdjustEmotion`                   | Adjusts the specified emotional ability value for an agent.                                         |
+| `AdjustEmotionTemporarily`        | Temporarily adjusts the specified emotional ability value for an agent, reverting after a set time. |
+| `SpawnEmotionArea`                | Spawns a new emotion area in the world with the specified parameters.                               |
 
-```cpp
-#include "AwareNavComponent.h"
+*All methods are* `BlueprintCallable`
 
-UFUNCTION()
-void MoveWithAwareness(AAIController* Controller, FVector Destination, float AwarenessLevel)
-{
-    UAwareNavComponent* NavComp = Controller->FindComponentByClass<UAwareNavComponent>();
-    if (NavComp)
-    {
-        NavComp->FindAwarePath(Controller->GetPawn()->GetActorLocation(), Destination, AwarenessLevel);
-    }
-}
-```
+---
 
-## Configuration
+## ⚙️ Project Settings
 
-- **Awareness Levels:** Define how sensitive your AI is to environmental factors (e.g., noise, light, obstacles).
-- **Custom Zones:** Mark areas in your level with different awareness modifiers.
-- **Debug Visualization:** Enable debug drawing to visualize awareness zones and chosen paths.
+Find under **Project Settings > AwareNav**:
 
-## Contributing
+- `EnablePermissionSystem`
+- `PermissionGroupProfilesTable`
+- `EnableEmotionSystem`
+- `EmotionGroupProfilesTable`
 
-Contributions are welcome! Please fork the repository and submit pull requests for bug fixes or new features.
+---
 
-## License
+## 📄 License
 
-This plugin is distributed under the MIT License. See `LICENSE` for details.
+This plugin is provided under your project license. Commercial or private use permitted.
 
-## Support
+---
 
-For questions or support, open an issue on the repository or contact the maintainer.
+## 🤝 Feedback & Suggestions
 
+This plugin is not open to forking or external contributions at this time.  
+However, feedback, ideas, and bug reports are always welcome — feel free to open an issue or get in touch.

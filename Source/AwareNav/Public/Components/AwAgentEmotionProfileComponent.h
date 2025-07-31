@@ -51,6 +51,7 @@ class AWARENAV_API UAwAgentEmotionProfileComponent : public UActorComponent
 	UPROPERTY()
 	TSet<AAwEmotionAreaVolume*> AreasAgentIsIn;
 
+	/** The set of emotional abilities. */
 	FEmotionalAbilityGroup AbilityGroup;
 
 public:
@@ -68,6 +69,12 @@ public:
 	 */
 	void SetAgentEmotionGroupProfile(const FName GroupID);
 	
+	/**
+	 * Adjust
+	 * @param AbilityType 
+	 * @param Delta 
+	 * @param AdjustTime 
+	 */
 	void AdjustEmotion(const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime = 0.0f);
 	
 	/**
@@ -86,7 +93,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
-	void CalculateNavCosts();	
-	void CalculateSafetyNavCost();
-	void CalculateMemoryBasedNavCosts();
+	/**
+	 * Calculates nav costs based on emotional abilities.
+	 */
+	void CalculateNavCosts();
 };

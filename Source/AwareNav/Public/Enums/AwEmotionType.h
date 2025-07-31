@@ -24,11 +24,19 @@ enum class EAwEmotionType : uint8
     Nostalgia			UMETA(DisplayName = "Nostalgia"),
 };
 
+/**
+ * Represents the types of emotional abilities that are used to modulate how agents react to different emotion areas.
+ */
 UENUM(BlueprintType)
 enum class EEmotionalAbilityType : uint8
 {
+    /** Agent's courage, typically reduces the effect of fear-based emotion areas. */
     Courage         UMETA(DisplayName = "Courage"),
+
+    /** Agent's tendency to seek comfort or safety, increases attraction to safety areas. */
     ComfortSeeking  UMETA(DisplayName = "Comfort Seeking"),
+    
+    /** Agent's memory, affects on nostalgia and haunting areas. */
     Memory          UMETA(DisplayName = "Memory"),
 
     // Future entries:

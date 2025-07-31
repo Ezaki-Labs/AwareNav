@@ -2,8 +2,8 @@
 
 #include "NavigationData.h"
 #include "AIController.h"
-#include "AwareNavSettings.h"
 
+#include "AwareNavSettings.h"
 #include "Enums/AwPermissionLevel.h"
 #include "NavAreas/AwEmotionNavAreas.h"
 #include "NavAreas/AwRestrictedNavAreas.h"
