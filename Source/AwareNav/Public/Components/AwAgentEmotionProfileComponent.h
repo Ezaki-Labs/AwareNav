@@ -58,24 +58,34 @@ public:
 	UAwAgentEmotionProfileComponent();
 
 	/**
+	 * Sets the emotion group profile for this agent.
+	 * @param GroupID The identifier of the emotion group to assign.
+	 */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Assigns an emotion group profile to this agent."))
+	void SetAgentEmotionGroupProfile(const FName GroupID);
+
+	/**
+	 * Gets the emotion group profile of this agent.
+	 * @return Emotion group ID.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Gets an emotion group profile of this agent."))
+	FName GetAgentEmotionGroupProfile() const {return EmotionGroupID;}
+	
+
+	/**
+	 * Adjusts the specified emotional ability value for an agent.
+	 * @param AbilityType The type of emotional ability to adjust.
+	 * @param Delta The amount to adjust the ability by (positive or negative).
+     * @param AdjustTime How long (in seconds) the adjustment should last before reverting.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Adjusts the specified emotional ability value for an agent."))
+	void AdjustEmotion(const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime = 0.0f);
+
+	/**
 	 * Gets the current emotion area cost multipliers for this agent.
 	 * @return Map of emotion types to cost multipliers.
 	 */
 	TMap<UClass*, float> GetEmotionalAreaCosts() const {return EmotionAreaCosts;}
-
-	/**
-	 * Sets the emotion group profile for this agent.
-	 * @param GroupID The identifier of the emotion group to assign.
-	 */
-	void SetAgentEmotionGroupProfile(const FName GroupID);
-	
-	/**
-	 * Adjust
-	 * @param AbilityType 
-	 * @param Delta 
-	 * @param AdjustTime 
-	 */
-	void AdjustEmotion(const EEmotionalAbilityType AbilityType, const int32 Delta, const float AdjustTime = 0.0f);
 	
 	/**
 	 * Notifies the component that the agent has entered an emotion area volume.

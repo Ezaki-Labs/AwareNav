@@ -128,6 +128,14 @@ public:
     void SetAgentEmotionGroupProfile(const AActor* Agent, const FName GroupID);
 
     /**
+	 * Gets an emotion group profile of the specified agent.
+     * @param Agent The agent actor to assign the group to.
+	 * @return Emotion group ID.
+     */
+	UFUNCTION(BlueprintCallable, Category = "AwareNav|Emotions", meta = (ToolTip = "Gets an emotion group profile of this agent."))
+    FName GetAgentEmotionGroupProfile(const AActor* Agent);
+
+    /**
      * Adjusts the specified emotional ability value for an agent.
      * @param Agent The agent actor whose ability will be adjusted.
      * @param AbilityType The type of emotional ability to adjust.

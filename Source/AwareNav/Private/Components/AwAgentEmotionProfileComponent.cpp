@@ -89,6 +89,7 @@ void UAwAgentEmotionProfileComponent::SetAgentEmotionGroupProfile(const FName Gr
 	if (const FAwAgentEmotionalAbilityGroupProfile* PermissionGroupRow = EmotionGroupTable->FindRow<FAwAgentEmotionalAbilityGroupProfile>(GroupID, TEXT("Emotion Group Lookup")))
 	{
 		AbilityGroup = PermissionGroupRow->AbilityGroup;
+		EmotionGroupID = GroupID;
 		CalculateNavCosts();
 	}
 	else

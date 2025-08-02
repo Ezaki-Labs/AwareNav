@@ -96,6 +96,21 @@ void UAwareNavSubsystem::SetAgentEmotionGroupProfile(const AActor* Agent, const 
 	}
 }
 
+FName UAwareNavSubsystem::GetAgentEmotionGroupProfile(const AActor* Agent)
+{
+	if (!IsValid(Agent))
+	{
+		return FName();
+	}
+	
+	if (const UAwAgentEmotionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentEmotionProfileComponent>(); IsValid(PermissionProfileComponent))
+	{
+		return PermissionProfileComponent->GetAgentEmotionGroupProfile();
+	}
+	
+	return FName();
+}
+
 void UAwareNavSubsystem::AdjustEmotion(const AActor* Agent, const EEmotionalAbilityType AbilityType, const int32 Delta)
 {
 	if (!IsValid(Agent))
