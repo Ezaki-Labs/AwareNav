@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 
 #include "Components/AwAgentEmotionProfileComponent.h"
+#include "Components/BillboardComponent.h"
 #include "NavAreas/AwEmotionNavAreas.h"
 
 AAwEmotionAreaVolume::AAwEmotionAreaVolume()
@@ -36,6 +37,14 @@ AAwEmotionAreaVolume::AAwEmotionAreaVolume()
 	NavZoneActor->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	NavZoneActor->bNavigationRelevant = true;
 	NavZoneActor->bDynamicObstacle = true;
+
+#if WITH_EDITOR
+	EditorOnlyBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("EditorOnlyBillboard"));
+	EditorOnlyBillboard->SetupAttachment(RootComponent);
+	EditorOnlyBillboard->SetHiddenInGame(true);
+	EditorOnlyBillboard->Sprite = LoadObject<UTexture2D>(nullptr, TEXT("/Engine/EditorResources/S_Actor.S_Actor"));
+	EditorOnlyBillboard->SetRelativeLocation(FVector(0, 0, 100));
+#endif
 }
 
 AAwEmotionAreaVolume* AAwEmotionAreaVolume::SpawnEmotionArea(UWorld* World, const FEmotionAreaSpawnParams& SpawnParams)

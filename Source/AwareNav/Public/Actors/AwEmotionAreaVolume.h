@@ -12,6 +12,7 @@ class UAwAgentEmotionProfileComponent;
 class USphereComponent;
 class AAwEmotionZone;
 class UAwEmotionNavArea_Base;
+class UBillboardComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEnteredEmotionArea, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorLeftEmotionArea, AActor*, Agent, UAwAgentEmotionProfileComponent*, AgentEmotionProfileComponent);
@@ -68,6 +69,11 @@ class AWARENAV_API AAwEmotionAreaVolume : public AActor
     /** Set of agent emotion profile components currently inside the area. */
     UPROPERTY()
     TSet<UAwAgentEmotionProfileComponent*> AgentsInArea;
+
+#if WITH_EDITORONLY_DATA
+    UPROPERTY()
+    UBillboardComponent* EditorOnlyBillboard = nullptr;
+#endif
 
 public:
     AAwEmotionAreaVolume();
