@@ -31,6 +31,36 @@ void UAwareNavSubsystem::SetAgentPermissionGroupProfile(const AActor* Agent, con
 	}
 }
 
+FName UAwareNavSubsystem::GetAgentPermissionGroupProfile(const AActor* Agent)
+{
+	if (!IsValid(Agent))
+	{
+		return FName();
+	}
+	
+	if (const UAwAgentPermissionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentPermissionProfileComponent>(); IsValid(PermissionProfileComponent))
+	{
+		return PermissionProfileComponent->GetAgentPermissionGroupProfile();
+	}
+	
+	return FName();
+}
+
+bool UAwareNavSubsystem::DoesHavePermissionToBeHere(const AActor* Agent)
+{
+	if (!IsValid(Agent))
+	{
+		return true;
+	}
+	
+	if (UAwAgentPermissionProfileComponent* PermissionProfileComponent = Agent->FindComponentByClass<UAwAgentPermissionProfileComponent>(); IsValid(PermissionProfileComponent))
+	{
+		return PermissionProfileComponent->DoesHavePermissionToBeHere();
+	}
+	
+	return true;
+}
+
 void UAwareNavSubsystem::SetAreaPermission(AAwRestrictedAreaVolume* Area, const EAwPermissionLevel NewPermission)
 {
 	if (!IsValid(Area))
@@ -39,6 +69,16 @@ void UAwareNavSubsystem::SetAreaPermission(AAwRestrictedAreaVolume* Area, const 
 	}
 
 	Area->SetPermissionLevel(NewPermission);
+}
+
+EAwPermissionLevel UAwareNavSubsystem::GetAreaPermission(AAwRestrictedAreaVolume* Area)
+{
+	if (!IsValid(Area))
+	{
+		return EAwPermissionLevel::None;
+	}
+
+	return Area->GetPermissionLevel();
 }
 #pragma endregion
 

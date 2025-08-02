@@ -5,6 +5,8 @@
 
 #include "AwareNavSettings.h"
 #include "Components/AwAgentPermissionProfileComponent.h"
+#include "Components/BillboardComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "NavAreas/AwRestrictedNavAreas.h"
 
 AAwRestrictedAreaVolume::AAwRestrictedAreaVolume(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -22,7 +24,27 @@ AAwRestrictedAreaVolume::AAwRestrictedAreaVolume(const FObjectInitializer& Objec
     TriggerVolume->SetCollisionObjectType(ECC_WorldDynamic);
     TriggerVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
     TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-    TriggerVolume->SetGenerateOverlapEvents(true);    
+    TriggerVolume->SetGenerateOverlapEvents(true);
+
+#if WITH_EDITOR
+    EditorOnlyBillboard = CreateDefaultSubobject<UBillboardComponent>(TEXT("EditorOnlyBillboard"));
+    EditorOnlyBillboard->SetupAttachment(RootComponent);
+    EditorOnlyBillboard->SetHiddenInGame(true);
+    EditorOnlyBillboard->Sprite = LoadObject<UTexture2D>(nullptr, TEXT("/Engine/EditorResources/S_Actor.S_Actor"));
+    EditorOnlyBillboard->SetRelativeLocation(FVector(0, 0, 100));
+
+    EditorLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("EditorLabel"));
+    EditorLabel->SetupAttachment(RootComponent);
+    EditorLabel->SetText(EditorOnlyLabel);
+    EditorLabel->SetHorizontalAlignment(EHTA_Center);
+    EditorLabel->SetVerticalAlignment(EVRTA_TextCenter);
+    EditorLabel->SetTextRenderColor(FColor::Black);
+    EditorLabel->SetWorldSize(20.f);
+    EditorLabel->SetYScale(3.0f);
+    EditorLabel->AddRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
+    EditorLabel->SetVisibility(true);
+    EditorLabel->SetHiddenInGame(true);
+#endif
 }
 
 void AAwRestrictedAreaVolume::OnConstruction(const FTransform& Transform)
@@ -139,6 +161,10 @@ void AAwRestrictedAreaVolume::PostEditChangeProperty(FPropertyChangedEvent& Prop
     if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwRestrictedAreaVolume, PermissionLevel))
     {
         AreaClass = UAwRestrictedNavArea_Base::GetNavAreaByPermissionLevel(PermissionLevel);
+    }
+    else if (PropertyName == GET_MEMBER_NAME_CHECKED(AAwRestrictedAreaVolume, EditorOnlyLabel))
+    {
+        EditorLabel->SetText(EditorOnlyLabel);
     }
 }
 

@@ -48,6 +48,7 @@ void UAwAgentPermissionProfileComponent::SetAgentPermissionGroupProfile(const FN
 	if (const FAwAgentPermissionGroupProfile* PermissionGroupRow = PermissionGroupTable->FindRow<FAwAgentPermissionGroupProfile>(GroupID, TEXT("Permission Group Lookup")))
 	{
 		PermissionLevels = PermissionGroupRow->PermissionLevels;
+		PermissionGroupID = GroupID;
 	}
 	else
 	{
@@ -62,6 +63,15 @@ void UAwAgentPermissionProfileComponent::EnterPermissionVolume(AAwRestrictedArea
 		AreasAgentIsIn.Add(RestrictedAreaVolume);
 		OnEnteredRestrictedVolume.Broadcast(RestrictedAreaVolume);
 	}
+}
+
+bool UAwAgentPermissionProfileComponent::DoesHavePermissionToBeHere()
+{
+	for (const AAwRestrictedAreaVolume* RestrictedAreaVolume: AreasAgentIsIn)
+	{
+		return PermissionLevels & static_cast<uint8>(RestrictedAreaVolume->GetPermissionLevel());
+	}
+	return true;
 }
 
 void UAwAgentPermissionProfileComponent::LeavePermissionVolume(AAwRestrictedAreaVolume* RestrictedAreaVolume)

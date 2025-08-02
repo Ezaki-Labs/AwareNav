@@ -7,6 +7,8 @@
 
 #include "AwRestrictedAreaVolume.generated.h"
 
+class UBillboardComponent;
+class UTextRenderComponent;
 class UAwAgentPermissionProfileComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnActorEnteredRestrictedArea, AActor*, Agent, UAwAgentPermissionProfileComponent*, AgentPermissionProfileComponent);
@@ -35,6 +37,17 @@ class AWARENAV_API AAwRestrictedAreaVolume : public ANavModifierVolume
     /** Called when an agent leaves the restricted area. */
     UPROPERTY(BlueprintAssignable, Category="AwareNav|Permissions", meta = (ToolTip = "Called when an agent leaves the restricted area."))
     FOnActorLeftRestrictedArea OnActorLeft;
+
+#if WITH_EDITORONLY_DATA
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category="AwareNav|Permissions")
+    FText EditorOnlyLabel = FText::FromString(TEXT("Restricted Area"));
+    
+    UPROPERTY()
+    UBillboardComponent* EditorOnlyBillboard = nullptr;
+    
+    UPROPERTY()
+    UTextRenderComponent* EditorLabel;
+#endif
     
     /** Box trigger volume for overlap detection. */
     UPROPERTY()
@@ -54,7 +67,15 @@ public:
      * Set the permission level for this area.
      * @param NewPermissionLevel The new permission level to assign.
      */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Sets the permission level for this area."))
     void SetPermissionLevel(EAwPermissionLevel NewPermissionLevel);
+
+    /**
+     * Gets the permission level of this area.
+     * @return Permission level.
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Gets the permission level of this area."))
+    EAwPermissionLevel GetPermissionLevel() const  { return PermissionLevel; }
 
     /**
      * Force an agent to leave the area.
@@ -67,7 +88,7 @@ protected:
     
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-    
+
     UFUNCTION()
     void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
     UFUNCTION()

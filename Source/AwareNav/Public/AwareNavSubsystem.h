@@ -81,6 +81,22 @@ public:
     UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Assigns a permission group profile to the specified agent."))
     void SetAgentPermissionGroupProfile(const AActor* Agent, const FName GroupID);
 
+    /**
+     * Gets permission group profile ID of the agent.
+     * @param Agent The agent actor to assign the group to.
+     * @return Permission group ID.
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Gets permission group profile ID of the agent."))
+    FName GetAgentPermissionGroupProfile(const AActor* Agent);
+
+    /**
+     * Checks if the character has permission to be here.
+     * @param Agent The agent actor to assign the group to.
+	 * @return Check result.
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Checks if the character has permission to be here."))
+    bool DoesHavePermissionToBeHere(const AActor* Agent);
+
     // ----------- Restricted Area Volume -----------
 
     /**
@@ -90,6 +106,14 @@ public:
      */
     UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Sets the permission level for a restricted area volume."))
     void SetAreaPermission(AAwRestrictedAreaVolume* Area, const EAwPermissionLevel NewPermission);
+
+    /**
+     * Gets the permission level of a restricted area volume.
+     * @param Area The restricted area volume to modify.
+     * @return Permission level.
+     */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Gets the permission level of a restricted area volume."))
+    EAwPermissionLevel GetAreaPermission(AAwRestrictedAreaVolume* Area);
 #pragma endregion
 
 #pragma region Emotions	

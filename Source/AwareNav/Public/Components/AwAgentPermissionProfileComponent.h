@@ -68,13 +68,29 @@ public:
 	 * Gets the agent's current permission levels.
 	 * @return The permission levels as a bitmask.
 	 */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Gets permission levels."))
 	uint8 GetPermissionLevels() const {return PermissionLevels;}
 
 	/**
 	 * Assigns a new permission group profile to the agent.
 	 * @param GroupID The identifier of the permission group to assign.
 	 */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Assigns a permission group profile to the agent."))
 	void SetAgentPermissionGroupProfile(const FName GroupID);
+
+	/**
+	 * Gets permission group profile ID of the agent.
+	 * @return Permission group ID.
+	 */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Gets permission group profile ID of the agent."))
+	FName GetAgentPermissionGroupProfile() const {return PermissionGroupID;}
+
+	/**
+	 * Checks if the character has permission to be here.
+	 * @return Check result.
+	 */
+    UFUNCTION(BlueprintCallable, Category = "AwareNav|Permissions", meta = (ToolTip = "Checks if the character has permission to be here."))
+	bool DoesHavePermissionToBeHere();
 	
 	/**
 	 * Notifies the component that the agent has entered a restricted area volume.
