@@ -33,6 +33,7 @@
 1. Copy the `AwareNav` folder to your project's `Plugins/` directory
 2. Open Unreal Editor → **Enable the plugin** in Plugin Browser
 3. Restart the editor
+4. Also, as this project uses navigation runtime generation, please set **Runtime Generation** in **Engine - Navigation Mesh** project settings to **Dynamic Modifiers Only** or **Dynamic**
 
 ### 🧠 Emotion System Setup
 
