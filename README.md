@@ -2,6 +2,7 @@
 
 **AwareNav** is a modular Unreal Engine plugin that enhances AI navigation with **emotion-aware pathfinding** and **permission-based access control**. Ideal for games with dynamic AI personalities, stealth, horror, or story-driven behaviour systems.
 
+> 👉 Looking for a hands-on example? Check out the [AwareNav Demo](https://github.com/eduardzakaryan90/AwareNavDemo).
 ---
 
 ## 🔑 Features
