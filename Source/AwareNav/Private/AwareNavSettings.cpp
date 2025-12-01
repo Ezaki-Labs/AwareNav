@@ -1,5 +1,7 @@
 #include "AwareNavSettings.h"
 
+#include "Engine/DataTable.h"
+
 #include "Data/AwAgentEmotionalAbilityGroupProfile.h"
 #include "Data/AwAgentPermissionGroupProfile.h"
 

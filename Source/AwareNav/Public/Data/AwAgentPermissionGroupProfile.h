@@ -17,6 +17,6 @@ struct AWARENAV_API FAwAgentPermissionGroupProfile : public FTableRowBase
 	GENERATED_BODY()
 
 	/** The set of permissions for this group profile. */
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/AwareNav.EAwPermissionLevel", ToolTip = "The set of permissions for this group profile."))
+	UPROPERTY(EditAnywhere, Category="AwareNav|Permissions", meta = (Bitmask, BitmaskEnum = "/Script/AwareNav.EAwPermissionLevel", ToolTip = "The set of permissions for this group profile."))
 	uint8 PermissionLevels = 0;
 };

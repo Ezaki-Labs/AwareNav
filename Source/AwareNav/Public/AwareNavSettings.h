@@ -4,6 +4,9 @@
 
 #include "AwareNavSettings.generated.h"
 
+class UDataTable;
+
+
 /**
  * Settings for the AwareNav plugin.
  */

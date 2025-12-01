@@ -1,9 +1,11 @@
 #include "Actors/AwEmotionAreaVolume.h"
 
-#include "AwareNavSettings.h"
 #include "AI/NavigationSystemBase.h"
 #include "Components/SphereComponent.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
+#include "AwareNavSettings.h"
 #include "Components/AwAgentEmotionProfileComponent.h"
 #include "Components/BillboardComponent.h"
 #include "NavAreas/AwEmotionNavAreas.h"

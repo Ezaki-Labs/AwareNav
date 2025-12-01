@@ -41,7 +41,7 @@ public class AwareNav : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
@@ -53,5 +53,10 @@ public class AwareNav : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+		
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.Add("Settings");
+		}
 	}
 }

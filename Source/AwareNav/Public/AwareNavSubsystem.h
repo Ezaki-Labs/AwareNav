@@ -20,35 +20,35 @@ struct FEmotionAreaSpawnParams
     GENERATED_BODY()
 
     /** World location where the emotion area will be spawned. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "World location where the emotion area will be spawned."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "World location where the emotion area will be spawned."))
     FVector SpawnLocation = FVector::ZeroVector;
 
     /** The type of emotion this area represents. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "The type of emotion this area represents."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "The type of emotion this area represents."))
     EAwEmotionType EmotionType = EAwEmotionType::None;
 
     /** The radius of the emotion area. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "The radius of the emotion area."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "The radius of the emotion area."))
     float Radius = 400.0f;
 
     /** Whether the area should have a limited lifespan. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether the area should have a limited lifespan."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "Whether the area should have a limited lifespan."))
     bool bHasLifeSpan = false;
 
     /** How long (in seconds) the area should exist if it has a lifespan. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How long (in seconds) the area should exist if it has a lifespan."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "How long (in seconds) the area should exist if it has a lifespan."))
     float LifeSpan = 5.0f;
 
     /** Whether the area should shrink over time. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether the area should shrink over time."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "Whether the area should shrink over time."))
     bool bReducing = false;
 
     /** How often (in seconds) the area should shrink if reducing is enabled. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How often (in seconds) the area should shrink if reducing is enabled."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "How often (in seconds) the area should shrink if reducing is enabled."))
     float ReduceIntervalInSeconds = 3.0f;
 
     /** How much the area radius should shrink each interval. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "How much the area radius should shrink each interval."))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AwareNav|Emotions", meta = (ToolTip = "How much the area radius should shrink each interval."))
     float ReduceAmountPerInterval = 20.0f;
 };
 #pragma endregion

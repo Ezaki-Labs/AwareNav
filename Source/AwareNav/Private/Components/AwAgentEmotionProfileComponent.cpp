@@ -1,5 +1,8 @@
 #include "Components/AwAgentEmotionProfileComponent.h"
 
+#include "Engine/World.h"
+#include "TimerManager.h"
+
 #include "AwareNavSettings.h"
 #include "Actors/AwEmotionAreaVolume.h"
 #include "Data/AwAgentEmotionalAbilityGroupProfile.h"
